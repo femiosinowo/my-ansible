@@ -1,6 +1,9 @@
 #general servers ip
 filebeat_logstash_host: 192.168.100.102
 consul_server: 192.168.100.104
+java_packages:
+  - java-1.8.0-openjdk
+
 #consul
 consul_version: 0.7.0
 consul_datacenter: "paosin-ansible"

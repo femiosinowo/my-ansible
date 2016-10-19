@@ -1,6 +1,10 @@
 ---
 - hosts: all
   roles:
+    - epel
     - common
-    - ansible-consul
+    - java
+    - consul
     - beats
+
+

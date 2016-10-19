@@ -3,4 +3,6 @@ ansible-galaxy install bertvv.httpd
 ansible-galaxy install geerlingguy.logstash
 ansible-galaxy install jmatt.beats
 ansible-galaxy install savagegus.consul
-https://github.com/azavea/ansible-kibana.git
+ansible-galaxy install leifmadsen.kibana-4
+ansible-galaxy install binarytemple.java
+ansible-galaxy install dochang.pip

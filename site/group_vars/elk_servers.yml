@@ -18,8 +18,8 @@ logstash_local_syslog_path: /var/log/syslog
 logstash_monitor_local_syslog: true
 
 #Kibana
-kibana_version: 4.5.0
-kibana_elasticsearch: http://localhost:9200
+kibana_version: 4.5
+elasticsearch_url: http://localhost:9200
 kibana_port: 5601
 
 

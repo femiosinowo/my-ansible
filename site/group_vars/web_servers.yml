@@ -1,0 +1,14 @@
+httpd_Listen: 81
+
+consul_services:
+  - service:
+      name: "localhost"
+      tags:
+        - "httpd"
+      address: "localhost"
+      port: 81
+      checks:
+        - name: "Httpd health check"
+          http: "http://localhost:81"
+          interval: "10s"
+          timeout: "1s"

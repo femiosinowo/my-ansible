@@ -1,0 +1,6 @@
+---
+- hosts: elk_servers
+  roles:
+    - logstash
+    - ansible-kibana
+    - elasticsearch

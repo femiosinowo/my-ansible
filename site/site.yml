@@ -1,0 +1,6 @@
+---
+- include: server_roles/all_servers.yml
+- include: server_roles/web_servers.yml
+- include: server_roles/consul_servers.yml
+- include: server_roles/elk_servers.yml
+#- include: server_roles/db_servers.yml

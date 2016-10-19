@@ -1,0 +1,6 @@
+ansible-galaxy install cyverse.elasticsearch
+ansible-galaxy install bertvv.httpd
+ansible-galaxy install geerlingguy.logstash
+ansible-galaxy install jmatt.beats
+ansible-galaxy install savagegus.consul
+https://github.com/azavea/ansible-kibana.git

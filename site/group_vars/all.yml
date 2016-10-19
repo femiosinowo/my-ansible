@@ -1,0 +1,40 @@
+#general servers ip
+filebeat_logstash_host: 192.168.100.102
+consul_server: 192.168.100.104
+#consul
+consul_version: 0.7.0
+consul_datacenter: "paosin-ansible"
+consul_is_server: false
+consul_bootstrap: false
+consul_bind_address: "{{ ansible_eth1.ipv4.address  }}"
+consul_node_name: "{{ ansible_fqdn }}"
+consul_use_systemd: true
+consul_advertise_address: "{{ ansible_eth1.ipv4.address  }}"
+consul_servers: ["{{consul_server}}"]
+consul_use_initd: true
+consul_join_at_start: true
+ 
+#beats
+beat_name: filebeat
+beat_config:
+  filebeat:
+    prospectors:
+      - paths:
+          - "/var/log/de/*.log"
+        document_type: "de-log"
+    output:
+      logstash:
+        hosts:
+          - "{{filebeat_logstash_host}}"
+        index: "{{filebeat_index_pattern}}"
+    shipper:
+      name: "{{ansible_hostname}}"
+      tags: 
+        - "{{ inventory_file.split('/')[-1].split('.')[0] }}"
+    logging:
+     to_files: true
+     level: info
+     files:
+       path: /var/log/filebeat
+       name: filebeat
+       rotateeverybytes: 10485760

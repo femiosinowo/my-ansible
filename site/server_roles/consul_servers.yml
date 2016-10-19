@@ -1,0 +1,2 @@
+---
+- hosts: consul_servers

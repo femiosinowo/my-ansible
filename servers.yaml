@@ -1,0 +1,25 @@
+---
+- hostname: mgmt
+  box: rhel.7.ansible
+  ram: 512
+  ip: 192.168.100.100
+- hostname: web1
+  box: rhel.7.ansible
+  ram: 512
+  ip: 192.168.100.101
+  server_role: web_server
+- hostname: elk
+  box: rhel.7.ansible
+  ram: 512
+  ip: 192.168.100.102
+  server_role: elkstack_server
+- hostname: db
+  box: rhel.7.ansible
+  ram: 512
+  ip: 192.168.100.103
+  server_role: db_server
+- hostname: consul
+  box: rhel.7.ansible
+  ram: 512
+  ip: 192.168.100.104
+  server_role: consul_server

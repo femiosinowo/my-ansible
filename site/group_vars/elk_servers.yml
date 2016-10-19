@@ -1,0 +1,60 @@
+#elasticsearch
+es_instance_name: "node1" 
+es_plugins:
+  - plugin: elasticsearch/license
+    version: latest
+  - plugin: mobz/elasticsearch-head
+    version: latest
+#logstash
+logstash_listen_port_beats: 5044
+logstash_elasticsearch_hosts:
+   - http://localhost:9200
+logstash_install_plugins:
+   - logstash-input-beats
+   - logstash-output-rabbitmq
+   - logstash-input-rabbitmq
+logstash_enabled_on_boot: yes
+logstash_local_syslog_path: /var/log/syslog
+logstash_monitor_local_syslog: true
+
+#Kibana
+kibana_version: 4.5.0
+kibana_elasticsearch: http://localhost:9200
+kibana_port: 5601
+
+
+#consul
+consul_services:
+  - service:
+      name: "elasticsearch"
+      tags:
+        - "elasticsearch"
+      address: "localhost"
+      port: 9200
+      checks:
+        - name: "elasticsearch health check"
+          tcp: "localhost:9200"
+          interval: "10s"
+          timeout: "1s"
+  - service:
+      name: "logstash"
+      tags:
+        - "logstash"
+      address: "localhost"
+      port: 5044
+      checks:
+        - name: "logstash health check"
+          tcp: "localhost:5044"
+          interval: "10s"
+          timeout: "1s"
+  - service:
+      name: "kibana"
+      tags:
+        - "kibana"
+      address: "localhost"
+      port: 5601
+      checks:
+        - name: "kibana health check"
+          http: "http://localhost:5601"
+          interval: "10s"
+          timeout: "1s"

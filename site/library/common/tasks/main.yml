@@ -1,6 +1,10 @@
 ---
 # file: roles/common/tasks/main.yml
-
+- name: install policycoreutils-python
+  package:
+    name: policycoreutils-python
+    state: present
+    
 - name: be sure ntp is installed
   yum: name=ntp state=installed
   tags: ntp
@@ -13,4 +17,10 @@
 
 - name: be sure ntpd is running and enabled
   service: name=ntpd state=started enabled=yes
+  tags: ntp
+  
+- name: dnsmasq for consul
+  template: src=dnsmasq.conf.j2 dest=/etc/dnsmasq.d/10-consul.conf
+  notify:
+    - restart dnsmasq
   tags: ntp

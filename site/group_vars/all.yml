@@ -1,6 +1,17 @@
 #general servers ip
 filebeat_logstash_host: 192.168.100.102
-consul_server: 192.168.100.104
+consul_server: 192.168.100.105
+
+dns_server: 10.10.10.11
+
+resolv_conf_nameservers:
+      - 127.0.0.1
+      - 10.10.10.11
+      - 8.8.8.8
+resolv_conf_search_domains:
+      - paosin.local
+      - node.consul
+
 java_packages:
   - java-1.8.0-openjdk
 
@@ -14,9 +25,17 @@ consul_node_name: "{{ ansible_fqdn }}"
 consul_use_systemd: true
 consul_advertise_address: "{{ ansible_eth1.ipv4.address  }}"
 consul_servers: ["{{consul_server}}"]
-consul_use_initd: true
 consul_join_at_start: true
- 
+consul_log_level: "DEBUG"
+consul_dns_config: false
+consul_recursors: 
+ - 10.10.10.11
+
+
+sensu::server::ip: 192.168.100.106
+sensu::server: "sensu.service.{{consul_datacenter}}.consul"
+rabbitmq::host: "rabbitmq.service.{{consul_datacenter}}.consul"
+
 #beats
 beat_name: filebeat
 beat_config:

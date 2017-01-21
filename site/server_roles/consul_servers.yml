@@ -1,2 +1,5 @@
 ---
 - hosts: consul_servers
+  roles:
+    - consul
+    - consul1

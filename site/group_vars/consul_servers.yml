@@ -1,19 +1,19 @@
 consul_is_server: "true"
 consul_bootstrap: "true"
-consul_bind_address: "{{ ansible_eth1.ipv4.address }}"
-consul_use_systemd: true
 consul_is_ui: true
-consul_node_name: "{{ ansible_fqdn }}"
-consul_log_level: "DEBUG"
-consul_use_initd: true
+
+consul_ui_server_port: 85
+consul_install_nginx: true
+
+
 
 consul_services:
   - service:
-      name: "localhost"
+      name: "consul_server"
       tags:
-        - "httpd"
+        - "consul_server"
       address: "localhost"
-      port: 80
+      port: 8500
       checks:
         - name: "Consul health check"
           http: "http://localhost"

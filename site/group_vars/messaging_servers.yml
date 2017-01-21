@@ -1,0 +1,65 @@
+rabbitmq_enabled: yes
+
+rabbitmq_plugins:                       # Ensure the plugins is installed
+  - rabbitmq_management
+
+rabbitmq_users:                         # Ensure the users added
+  - user: admin
+    password: admin
+    vhost: /
+    configure_priv: .*
+    read_priv: .*
+    write_priv: .*
+    tags: administrator
+  - user: sensu
+    password: sensu
+    vhost: /sensu
+    configure_priv: .*
+    read_priv: .*
+    write_priv: .*
+    tags: administrator
+  - user: logstash
+    password: logstash
+    vhost: /logstash
+    configure_priv: .*
+    read_priv: .*
+    write_priv: .*
+    tags: administrator
+
+
+rabbitmq_vhosts: ['/','/sensu','/logstash']                     # Ensure the vhosts are exists
+
+consul_services:
+  - service:
+      name: "rabbitmq"
+      tags:
+        - "rabbitmq"
+      address: "localhost"
+      port: 5672
+      checks:
+        - name: "RabbitMQ health check"
+          tcp: "localhost:5672"
+          interval: "10s"
+          timeout: "1s"
+  - service:
+      name: "activemq"
+      tags:
+        - "activemq"
+      address: "localhost"
+      port: 61616
+      checks:
+        - name: "ActiveMQ health check"
+          tcp: "localhost:61616"
+          interval: "10s"
+          timeout: "1s"
+  - service:
+      name: "activemqstomp"
+      tags:
+        - "activemqstomp"
+      address: "localhost"
+      port: 61613
+      checks:
+        - name: "ActiveMQ Stomp health check"
+          tcp: "localhost:61613"
+          interval: "10s"
+          timeout: "1s"

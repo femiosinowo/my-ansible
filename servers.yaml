@@ -20,6 +20,16 @@
   server_role: db_server
 - hostname: consul
   box: rhel.7.ansible
-  ram: 512
-  ip: 192.168.100.104
+  ram: 1024
+  ip: 192.168.100.105
   server_role: consul_server
+- hostname: sensu
+  box: rhel.7.ansible
+  ram: 1024
+  ip: 192.168.100.106
+  server_role: sensu_server
+- hostname: messaging
+  box: rhel.7.ansible
+  ram: 1024
+  ip: 192.168.100.107
+  server_role: messaging_server

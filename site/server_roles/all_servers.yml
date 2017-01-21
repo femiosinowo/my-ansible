@@ -2,9 +2,11 @@
 - hosts: all
   roles:
     - epel
+    - resolv_conf
     - common
     - java
     - consul
-    - beats
+    #- beats
+    - sensu
 
 

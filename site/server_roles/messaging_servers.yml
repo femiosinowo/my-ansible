@@ -1,0 +1,8 @@
+---
+- hosts: messaging_servers
+  roles:
+    - rabbitmq
+    - rabbitmq_exchange
+    - messaging
+    #- activemq
+    #- redis

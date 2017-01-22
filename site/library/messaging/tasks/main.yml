@@ -23,7 +23,7 @@
 - rabbitmq_queue: name=queuelogstash vhost=/logstash login_user=logstash login_password=logstash
 
 # Bind myQueue to directExchange with routing key info
-- rabbitmq_binding: name=exchangelogstash destination=queuelogstash type=queue login_user=logstash login_password=logstash
+- rabbitmq_binding: name=exchangelogstash destination=queuelogstash vhost=/logstash type=queue login_user=logstash login_password=logstash
 
 # Bind directExchange to topicExchange with routing key *.info
 #- rabbitmq_binding: name=topicExchange destination=topicExchange type=exchange routingKey="logs.%{host}"

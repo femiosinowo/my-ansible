@@ -2,6 +2,8 @@
 filebeat_logstash_host: 192.168.100.102
 consul_server: 192.168.100.105
 
+
+
 dns_server: 10.10.10.11
 
 resolv_conf_nameservers:
@@ -36,6 +38,35 @@ sensu::server::ip: 192.168.100.106
 sensu::server: "sensu.service.{{consul_datacenter}}.consul"
 rabbitmq::host: "rabbitmq.service.{{consul_datacenter}}.consul"
 
+#sensu_ssl_gen_certs: true
+#sensu_deploy_rabbitmq: false
+
+#sensu_deploy_redis: false
+#
+#rabbitmq_port: 5672
+
+#sensu_api_host:  "sensu.service.{{consul_datacenter}}.consul"
+
+rabbitmq_host: "rabbitmq.service.{{consul_datacenter}}.consul"
+
+server__sensu: "sensu.service.{{consul_datacenter}}.consul"
+
+sensu_plugins_directory: /opt/sensu/embedded/bin/ruby
+
+
+sensu_install_server: false
+sensu_install_api: false
+sensu_install_client: true
+
+sensu_checks:
+  - name: check_cron
+    command: "{{ sensu_plugins_directory }}/check-procs.rb -d cron -C 1"
+  - name: check_cron
+    command: "{{ sensu_plugins_directory }}/check-disk-usage.rb -w 80 -c 90"  
+
+
+
+
 #beats
 beat_name: filebeat
 beat_config:
@@ -60,3 +91,6 @@ beat_config:
        path: /var/log/filebeat
        name: filebeat
        rotateeverybytes: 10485760
+       
+       
+dynamic_data_store: /etc/dynamic

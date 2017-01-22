@@ -4,5 +4,7 @@
     - rabbitmq
     - rabbitmq_exchange
     - messaging
+    - sensu
+    - sensu_plugins
     #- activemq
     #- redis

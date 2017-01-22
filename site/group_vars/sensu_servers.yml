@@ -1,0 +1,53 @@
+sensu_install_server: true
+sensu_install_api: true
+
+redis_bind_interface: 0.0.0.0
+
+
+sensu_rabbitmq_host: "{{ rabbitmq_host }}"
+sensu_rabbitmq_port: 5672
+sensu_rabbitmq_user: sensu
+sensu_rabbitmq_password: sensu
+sensu_rabbitmq_vhost: /sensu
+
+uchiwa_sensu_site: "{{consul_datacenter}}"
+uchiwa_user: admin
+uchiwa_pass: admin
+
+sensu_redis_host: localhost
+sensu_redis_port: 6379
+
+consul_services:
+  - service:
+      name: "redis"
+      tags:
+        - "redis"
+      address: "localhost"
+      port: 6379
+      checks:
+        - name: "redis health check"
+          tcp: "localhost:6379"
+          interval: "10s"
+          timeout: "1s"
+  - service:
+      name: "uchiwa"
+      tags:
+        - "uchiwa"
+      address: "localhost"
+      port: 3000
+      checks:
+        - name: "Uchiwa health check"
+          tcp: "localhost:3000"
+          interval: "10s"
+          timeout: "1s"
+  - service:
+      name: "sensu"
+      tags:
+        - "sensu"
+      address: "localhost"
+      port: 4567
+      checks:
+        - name: "Sensu Stomp health check"
+          tcp: "localhost:4567"
+          interval: "10s"
+          timeout: "1s"

@@ -1,3 +1,12 @@
+#sensu_master: true
+#sensu_include_dashboard: true
+
+#uchiwa_dc_name: local
+#sensu_deploy_redis: true
+#redis_host: '127.0.0.1'
+#redis_server: true
+
+
 rabbitmq_enabled: yes
 
 rabbitmq_plugins:                       # Ensure the plugins is installed

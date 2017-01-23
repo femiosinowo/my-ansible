@@ -2,5 +2,6 @@
 # file: roles/common/handlers/main.yml
 - name: restart ntpd
   service: name=ntpd state=restarted
+
 - name: restart dnsmasq
-  service: name=dnsmasq state=restarted
+  service: name=dnsmasq state=restarted enabled=yes

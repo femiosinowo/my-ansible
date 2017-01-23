@@ -61,8 +61,8 @@ rabbitmq_host: "rabbitmq.service.{{consul_datacenter}}.consul"
 
 server__sensu: "sensu.service.{{consul_datacenter}}.consul"
 
-sensu_plugins_directory: /etc/sensu/plugins
-sensu_ruby_path: /opt/sensu/embedded/bin/ruby
+sensu_plugins_directory: "/opt/sensu/embedded/bin" #"/etc/sensu/plugins" #"/opt/sensu/embedded/bin" # 
+sensu_ruby_path: "/opt/sensu/embedded/bin/ruby"
 
 sensu_rabbitmq_host: "{{ rabbitmq_host }}"
 sensu_rabbitmq_port: 5672

@@ -1,9 +1,11 @@
 # Fetch metrics about the CPU load every 60 seconds,
 # the sensu server has a handler called 'relay' which forwards stats to graphite
+##/opt/sensu/embedded/bin/ruby /root/.gem/ruby/2.0.0/gems/
+
 - name: get cpu metrics
   sensu_check:
     name: cpu_load
-    command: "{{ sensu_ruby_path }} {{ sensu_plugins_directory }}/cpu-mpstat-metrics.rb"
+    command: "{{ sensu_ruby_path }} {{ sensu_plugins_directory }}/metrics-cpu-mpstat.rb"
     metric: yes
     handlers: relay
     subscribers: ALL
@@ -25,7 +27,15 @@
     handlers: default
     subscribers: ALL
     interval: 60    
-# Check whether nginx is running
+- name: get selinx metrics
+  sensu_check:
+    name: check-redis
+    command: "{{ sensu_ruby_path }} {{ sensu_plugins_directory }}/check-redis-ping.rb"
+    metric: yes
+    handlers: default
+    subscribers: REDIS
+    interval: 60    
+    # Check whether nginx is running
 - name: check nginx process
   sensu_check:
     name: nginx_running

@@ -1,23 +1,50 @@
 #/opt/sensu/embedded/bin/gem install --install-dir /etc/sensu/plugins/ sensu-plugins-disk-checks
 
-#- gem: name=sensu-plugins-disk-checks version=0.0.1 state=present executable=/opt/sensu/embedded/bin/gem
-#- gem: name=sensu-plugins-consul state=present executable=/opt/sensu/embedded/bin/gem
-#- gem: name=sensu-plugins-rabbitmq state=present executable=/opt/sensu/embedded/bin/gem
-#- gem: name=sensu-plugins-uchiwa state=present executable=/opt/sensu/embedded/bin/gem
-#- gem: name=sensu-plugins-haproxy state=present executable=/opt/sensu/embedded/bin/gem
-#- gem: name=sensu-plugins-redis state=present executable=/opt/sensu/embedded/bin/gem
-#- gem: name=sensu-plugins-elasticsearch state=present executable=/opt/sensu/embedded/bin/gem
-#- gem: name=sensu-plugins-logstash state=present executable=/opt/sensu/embedded/bin/gem
-#- gem: name=sensu-plugins-selinux state=present executable=/opt/sensu/embedded/bin/gem
+#- gem: name=sensu-plugins-disk-checks state=present 
+#- gem: name=sensu-plugins-consul state=present 
+#- gem: name=sensu-plugins-rabbitmq state=present 
+#- gem: name=sensu-plugins-uchiwa state=present 
+#- gem: name=sensu-plugins-haproxy state=present 
+#- gem: name=sensu-plugins-redis state=present 
+#- gem: name=sensu-plugins-elasticsearch state=present 
+#- gem: name=sensu-plugins-logstash state=present 
+#- gem: name=sensu-plugins-selinux state=present 
+#- gem: name=sensu-plugins-cpu-checks state=present
+#- gem: name=sensu-plugin state=present
+#- gem: name=linux-kstat state=present
+#- gem: name=redis state=present
+#/opt/sensu/embedded/bin/ruby /root/.gem/ruby/2.0.0/gems/
+- name: installing gems
+  gem:
+    name: "{{ item }}"
+    user_install: no
+    executable: /opt/sensu/embedded/bin/gem
+    state: present
+  with_items:
+    - sensu-plugins-disk-checks
+    - sensu-plugins-consul
+    - sensu-plugins-rabbitmq
+    - sensu-plugins-uchiwa
+    - sensu-plugins-haproxy
+    - sensu-plugins-redis
+    - sensu-plugins-elasticsearch
+    - sensu-plugins-logstash
+    - sensu-plugins-selinux
+    - sensu-plugins-cpu-checks
+    - sensu-plugin
+    - linux-kstat
+    - redis
 
-- copy:
-    src: "{{ item }}"
-    dest: /etc/sensu/plugins/
-    owner: sensu
-    mode: 666
-  with_fileglob:
-    - plugins/*
+#- copy:
+#    src: "{{ item }}"
+#    dest: "{{ sensu_plugins_directory }}"
+#    owner: sensu
+#    group: sensu
+#    mode: 0555
+#  with_fileglob:
+#    - plugins/*
     
 - include: checks.yml
 
-
+- name: restart sensu-client
+  service: name=sensu-client state=restarted

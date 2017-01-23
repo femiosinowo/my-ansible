@@ -23,7 +23,6 @@
   template: src=dnsmasq.conf.j2 dest=/etc/dnsmasq.d/10-consul.conf
   notify:
     - restart dnsmasq
-  tags: ntp
   
 
 

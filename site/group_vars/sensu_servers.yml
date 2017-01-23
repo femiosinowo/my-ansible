@@ -4,7 +4,10 @@ sensu_install_api: true
 redis_bind_interface: 0.0.0.0
 
 
-
+sensu_client_subscriptions:
+  - ALL
+  - REDIS
+  - SENSU
 
 uchiwa_sensu_site: "{{consul_datacenter}}"
 uchiwa_user: admin

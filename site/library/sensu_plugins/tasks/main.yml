@@ -1,13 +1,23 @@
-- gem: name=sensu-plugins-disk-checks version=0.0.1 state=present executable=/opt/sensu/embedded/bin/gem
-- gem: name=sensu-plugins-consul state=present executable=/opt/sensu/embedded/bin/gem
-- gem: name=sensu-plugins-rabbitmq state=present executable=/opt/sensu/embedded/bin/gem
-- gem: name=sensu-plugins-uchiwa state=present executable=/opt/sensu/embedded/bin/gem
-- gem: name=sensu-plugins-haproxy state=present executable=/opt/sensu/embedded/bin/gem
-- gem: name=sensu-plugins-redis state=present executable=/opt/sensu/embedded/bin/gem
-- gem: name=sensu-plugins-elasticsearch state=present executable=/opt/sensu/embedded/bin/gem
-- gem: name=sensu-plugins-logstash state=present executable=/opt/sensu/embedded/bin/gem
-- gem: name=sensu-plugins-selinux state=present executable=/opt/sensu/embedded/bin/gem
+#/opt/sensu/embedded/bin/gem install --install-dir /etc/sensu/plugins/ sensu-plugins-disk-checks
 
+#- gem: name=sensu-plugins-disk-checks version=0.0.1 state=present executable=/opt/sensu/embedded/bin/gem
+#- gem: name=sensu-plugins-consul state=present executable=/opt/sensu/embedded/bin/gem
+#- gem: name=sensu-plugins-rabbitmq state=present executable=/opt/sensu/embedded/bin/gem
+#- gem: name=sensu-plugins-uchiwa state=present executable=/opt/sensu/embedded/bin/gem
+#- gem: name=sensu-plugins-haproxy state=present executable=/opt/sensu/embedded/bin/gem
+#- gem: name=sensu-plugins-redis state=present executable=/opt/sensu/embedded/bin/gem
+#- gem: name=sensu-plugins-elasticsearch state=present executable=/opt/sensu/embedded/bin/gem
+#- gem: name=sensu-plugins-logstash state=present executable=/opt/sensu/embedded/bin/gem
+#- gem: name=sensu-plugins-selinux state=present executable=/opt/sensu/embedded/bin/gem
 
+- copy:
+    src: "{{ item }}"
+    dest: /etc/sensu/plugins/
+    owner: sensu
+    mode: 666
+  with_fileglob:
+    - plugins/*
     
 - include: checks.yml
+
+

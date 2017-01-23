@@ -3,12 +3,12 @@
   box: rhel.7.ansible
   ram: 512
   ip: 192.168.100.100
-- hostname: web1
+- hostname: web1a
   box: rhel.7.ansible
   ram: 512
   ip: 192.168.100.101
   server_role: web_server
-- hostname: elk
+- hostname: elka
   box: rhel.7.ansible
   ram: 512
   ip: 192.168.100.102
@@ -18,17 +18,17 @@
   ram: 512
   ip: 192.168.100.103
   server_role: db_server
-- hostname: consul
+- hostname: consula
   box: rhel.7.ansible
   ram: 1024
-  ip: 192.168.100.105
+  ip: 192.168.100.104
   server_role: consul_server
-- hostname: sensu
+- hostname: sensua
   box: rhel.7.ansible
   ram: 1024
   ip: 192.168.100.106
   server_role: sensu_server
-- hostname: messaging
+- hostname: messaginga
   box: rhel.7.ansible
   ram: 1024
   ip: 192.168.100.107

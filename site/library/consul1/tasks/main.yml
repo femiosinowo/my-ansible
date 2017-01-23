@@ -4,10 +4,10 @@
     name: policycoreutils-python
     state: present
     
-- name: selinux port open policy
-  raw: semanage port -a -t http_port_t -p tcp 85
-  run_once: true
-  notify: restart nginx service
+#- name: selinux port open policy
+#  raw: semanage port -a -t http_port_t -p tcp 85
+#  run_once: true
+#  notify: restart nginx service
   
-- name: restart nginx
-  raw: systemctl restart nginx
+#- name: restart nginx
+#  raw: systemctl restart nginx

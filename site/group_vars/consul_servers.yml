@@ -6,19 +6,23 @@ consul_ui_server_port: 85
 consul_install_nginx: true
 
 
+consul_node_role: bootstrap
+consul_group_name: consul_servers
+
+
 
 consul_services:
   - service:
       name: "consul_server"
       tags:
         - "consul_server"
-      address: "localhost"
       port: 8500
       checks:
-        - name: "Consul health check"
-          http: "http://localhost"
+        - name: "RabbitMQ health check"
+          tcp: "localhost:8500"
           interval: "10s"
           timeout: "1s"
-          
+
+              
 #"{{ ansible_fqdn }}"
 #"{{ inventory_hostname }}"

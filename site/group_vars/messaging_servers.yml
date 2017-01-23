@@ -38,12 +38,12 @@ rabbitmq_users:                         # Ensure the users added
 
 rabbitmq_vhosts: ['/','/sensu','/logstash']                     # Ensure the vhosts are exists
 
+    
 consul_services:
   - service:
       name: "rabbitmq"
       tags:
         - "rabbitmq"
-      address: "localhost"
       port: 5672
       checks:
         - name: "RabbitMQ health check"
@@ -54,7 +54,6 @@ consul_services:
       name: "activemq"
       tags:
         - "activemq"
-      address: "localhost"
       port: 61616
       checks:
         - name: "ActiveMQ health check"
@@ -65,7 +64,6 @@ consul_services:
       name: "activemqstomp"
       tags:
         - "activemqstomp"
-      address: "localhost"
       port: 61613
       checks:
         - name: "ActiveMQ Stomp health check"

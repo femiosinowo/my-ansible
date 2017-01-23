@@ -4,9 +4,9 @@
 
 
 
-- name: selinux port open 15672
-  raw: setsebool -P nis_enabled 1
-  run_once: true
+#- name: selinux port open 15672
+#  raw: setsebool -P nis_enabled 1
+#  run_once: true
   
 - name: restart rabbitmq-server
   raw: systemctl restart rabbitmq-server

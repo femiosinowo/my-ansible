@@ -1,6 +1,6 @@
 #general servers ip
 filebeat_logstash_host: 192.168.100.102
-consul_server: 192.168.100.105
+consul_server: 192.168.100.104
 
 
 
@@ -18,8 +18,16 @@ java_packages:
   - java-1.8.0-openjdk
 
 #consul
-consul_version: 0.7.0
+consul_clients_group: all
+consul_bind_interface: eth1
+consul_enable_dnsmasq: false
+consul_master: 192.168.100.104
+consul_servers_group: "consul_servers"
+consul_version: 0.7.2
+
 consul_datacenter: "paosin-ansible"
+
+
 consul_is_server: false
 consul_bootstrap: false
 consul_bind_address: "{{ ansible_eth1.ipv4.address  }}"
@@ -33,6 +41,8 @@ consul_dns_config: false
 consul_recursors: 
  - 10.10.10.11
 
+consul_group_name: sensu_servers
+consul_node_role: client
 
 sensu::server::ip: 192.168.100.106
 sensu::server: "sensu.service.{{consul_datacenter}}.consul"
@@ -53,20 +63,24 @@ server__sensu: "sensu.service.{{consul_datacenter}}.consul"
 
 sensu_plugins_directory: /opt/sensu/embedded/bin/ruby
 
-
+sensu_rabbitmq_host: "{{ rabbitmq_host }}"
+sensu_rabbitmq_port: 5672
+sensu_rabbitmq_user: sensu
+sensu_rabbitmq_password: sensu
+sensu_rabbitmq_vhost: /sensu
 sensu_install_server: false
 sensu_install_api: false
 sensu_install_client: true
 
-sensu_checks:
-  - name: check_cron
-    command: "{{ sensu_plugins_directory }}/check-procs.rb -d cron -C 1"
-  - name: check_cron
-    command: "{{ sensu_plugins_directory }}/check-disk-usage.rb -w 80 -c 90"  
+sensu_redis_host: "redis.service.{{consul_datacenter}}.consul"
+sensu_api_host: "sensu.service.{{consul_datacenter}}.consul"
 
-
-
-
+# Default sensu-client config variables
+sensu_client_name: "{{ ansible_hostname }}"
+sensu_client_address: "{{ ansible_eth1.ipv4.address }}"
+sensu_client_subscriptions:
+  - ALL
+  
 #beats
 beat_name: filebeat
 beat_config:

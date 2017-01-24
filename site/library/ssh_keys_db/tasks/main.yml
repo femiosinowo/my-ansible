@@ -36,7 +36,19 @@
     dest={{ postgres_create_barman_user.home }}/.ssh/id_rsa
     
 
-- name: Add ssh user keys
-  authorized_key: user="{{ item.name }}" key="{{ item.key }}"
-  with_items: ssh_users
-
+#- name: Add ssh user keys
+#  authorized_key: user="{{ item.name }}" key="{{ item.key }}"
+#  with_items: ssh_users
+  
+  
+- name: "add postgres ssh key to authorized_keys"
+  copy:
+    src={{ postgres_rsa_pub_file }}
+    dest={{ barman_create_barman_user.home }}/.ssh/authorized_keys
+    
+- name: "add barman ssh key to authorized_keys"
+  copy:
+    src={{ barman_rsa_pub_file }}
+    dest={{ postgres_create_barman_user.home }}/.ssh/authorized_keys
+        
+   

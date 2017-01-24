@@ -1,5 +1,5 @@
 barman_upstreams:
-  - name: "postgres-master"
+  - name: "db1"
     hostname: "{{ postgresql_server1 }}"
         
         

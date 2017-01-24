@@ -10,7 +10,7 @@ barman_log_dir: /var/log/barman
 barman_user: barman
 barman_groups: syslog # comma delimited list of groups
 barman_log_file: /var/log/barman/barman.log
-barman_log_level: INFO
+barman_log_level: DEBUG
 barman_compression: bzip2
 barman_maintenance_schedule: '*/30 * * * *' # How often to run `barman cron`
 barman_maintenance_log_file: /var/log/barman/cron.log

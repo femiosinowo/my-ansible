@@ -1,3 +1,18 @@
+---
+postgresql_pg_hba_conf_default:
+ - { type: local, database: all, user: all, address: '', method: peer  }
+ - { type: host,  database: all, user: all, address: "{{ barman_server }}/32", method: trust }
+ #- { type: host,  database: all, user: all,                         address: "::1/128",      method: md5 }
+
+#barman switch-xlog --force --archive db1
+
+postgresql_listen_addresses:
+  - "*"
+postgresql_archive_mode: on
+postgresql_wal_level: archive
+postgresql_archive_command: "rsync -a %p barman@{{ barman_server }}:{{ barman_home }}/db1/incoming/%f"
+
+
 consul_services:
   - service:
       name: "postgresql"
@@ -9,3 +24,12 @@ consul_services:
           tcp: "localhost:5432"
           interval: "10s"
           timeout: "1s"
+          
+postgresql_databases:
+  - name: example
+  
+postgresql_users:
+  - name: femi
+    password: password
+    database: example
+    priv: ALL/products:ALL

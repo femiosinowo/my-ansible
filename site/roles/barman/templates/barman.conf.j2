@@ -12,11 +12,13 @@ configuration_files_directory = {{barman_configuration_directory}}
 [{{server.name}}]
 description = "{{server.name}}"
 ssh_command = ssh {{server.ssh_user | default('postgres')}}@{{server.hostname}}
-conninfo = "user={{server.postgres_user | default('postgres')}} host={{server.hostname}} password={{server.postgres_password | default('postgres')}}"
+conninfo = "user={{server.postgres_user | default('postgres')}} host={{server.hostname}} "
 retention_policy_mode = "auto"
 retention_policy = "{{server.retention_policy | default('recovery window of 14 days')}}"
 wal_retention_policy = "main"
 archiver = on
+backup_method = rsync
+reuse_backup = link
 {% endfor %}
 
 ; vim:filetype=dosini

@@ -103,7 +103,7 @@ postgresql_effective_io_concurrency: 1
 #
 # - Settings -
 # minimal, archive or hot_standby
-postgresql_wal_level: minimal
+postgresql_wal_level: archive
 postgresql_fsync: yes
 postgresql_synchronous_commit: yes
 # supported by the operating system:

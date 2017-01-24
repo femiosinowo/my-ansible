@@ -34,6 +34,13 @@
     - sensu-plugin
     - linux-kstat
     - redis
+    - sensu-plugins-http
+    #- sensu-plugins-memory-checks
+    - sensu-plugins-process-checks
+    #- sensu-plugins-postgres
+    - sensu-plugins-jenkins
+    - sensu-plugins-uptime-checks
+    - sensu-plugins-java
 
 #- copy:
 #    src: "{{ item }}"

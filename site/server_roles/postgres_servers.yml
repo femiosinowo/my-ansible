@@ -1,0 +1,7 @@
+---
+- hosts: postgres_servers
+  roles:
+    - ssh_keys_db
+    - postgres
+    - sensu
+    - sensu_plugins

@@ -1,0 +1,11 @@
+consul_services:
+  - service:
+      name: "postgresql"
+      tags:
+        - "postgresql"
+      port: 5432
+      checks:
+        - name: "PostgreSql health check"
+          tcp: "localhost:5432"
+          interval: "10s"
+          timeout: "1s"

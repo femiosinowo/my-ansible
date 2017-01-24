@@ -17,6 +17,6 @@ ansible-galaxy install sbaerlocher.redis
 https://github.com/sensu-plugins/sensu-plugins-ansible
 https://github.com/clarkf/ansible-sensu
 
-
+ansible-galaxy install maanas.ansible-role-wget
 
 https://github.com/ansible/ansible-modules-extras

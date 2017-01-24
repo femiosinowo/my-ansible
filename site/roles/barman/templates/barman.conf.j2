@@ -14,8 +14,20 @@ description = "{{server.name}}"
 ssh_command = ssh {{server.ssh_user | default('postgres')}}@{{server.hostname}}
 conninfo = "user={{server.postgres_user | default('postgres')}} host={{server.hostname}} password={{server.postgres_password | default('postgres')}}"
 retention_policy_mode = "auto"
-retention_policy = "{{server.retention_policy | default('recovery window of 1 day')}}"
+retention_policy = "{{server.retention_policy | default('recovery window of 14 days')}}"
 wal_retention_policy = "main"
+archiver = on
 {% endfor %}
 
 ; vim:filetype=dosini
+
+;[main-db-server]
+;description = "Main DB Server"
+;archiver = on
+;ssh_command = ssh postgres@<%= @postgres_server_ip %>
+;conninfo = host=<%= @postgres_server_ip %> user=postgres
+;retention_policy_mode = auto
+;retention_policy = RECOVERY WINDOW OF 7 days
+;wal_retention_policy = main
+;backup_method = rsync
+;reuse_backup = link

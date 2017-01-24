@@ -1,0 +1,7 @@
+---
+- hosts: barman_servers
+  roles:
+    - ssh_keys_db
+    - barman
+    - sensu
+    - sensu_plugins

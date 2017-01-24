@@ -1,10 +1,5 @@
 ---
-- name: "create barman user"
-  user:
-    name={{ barman_user }}
-    groups={{ barman_groups }}
-    state=present
-  register: barman_create_barman_user
+
 
 - name: create barman incoming directories
   file:
@@ -14,12 +9,7 @@
     group={{ barman_user }}
   with_items: barman_upstreams
 
-- name: "create ssh directory"
-  file:
-    path={{ barman_create_barman_user.home }}/.ssh
-    state=directory
-    owner={{ barman_user }}
-    group={{ barman_user }}
+
 
 - name: add ssh config
   template:
@@ -29,16 +19,13 @@
     group={{ barman_user }}
     mode=0600
 
-- name: "add ssh key"
-  copy:
-    src={{ barman_ssh_key_file }}
-    dest={{ barman_create_barman_user.home }}/.ssh/id_rsa
 
-- name: "add authorized ssh key"
-  authorized_key:
-    key="{{ barman_archive_pub_key }}"
-    user={{ barman_user }}
-    state=present
+    
+#- name: "add authorized ssh key"
+#  authorized_key:
+#    key="{{ barman_archive_pub_key }}"
+#    user={{ barman_user }}
+#    state=present
 
 - name: "write barman.conf"
   template: src=barman.conf.j2 dest=/etc/barman.conf owner={{ barman_user }}
@@ -58,15 +45,18 @@
     owner={{ barman_user }}
     group={{ barman_user }}
 
-- name: "install barman deps, barman"
-  apt: name={{ item }} state=present
+- name: install the barman rpm from a remote repo
+  yum:
+    name: https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
+    state: present
+    
+- name: "install barman"
+  yum: name={{ item }} state=present
   with_items:
-  - libpq-dev
-  - python-pip
-  - python-dev
+  - barman
 
-- name: "install barman deps, barman"
-  pip: name=barman state=present
+#- name: "install barman deps, barman"
+#  pip: name=barman state=present
 
 - name: "add maintenance job"
   cron:

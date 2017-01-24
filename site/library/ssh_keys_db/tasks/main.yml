@@ -1,0 +1,42 @@
+---
+- name: "create barman user"
+  user:
+    name=barman
+    state=present
+  register: barman_create_barman_user
+  
+- name: "create postgress user"
+  user:
+    name=postgres
+    state=present
+  register: postgres_create_barman_user
+
+- name: "create barman ssh directory"
+  file:
+    path={{ barman_create_barman_user.home }}/.ssh
+    state=directory
+    owner=barman
+    group=barman
+    
+- name: "create postgres ssh directory"
+  file:
+    path={{ postgres_create_barman_user.home }}/.ssh
+    state=directory
+    owner=postgres
+    group=postgres  
+    
+- name: "add barman ssh key"
+  copy:
+    src={{ barman_ssh_key_file }}
+    dest={{ barman_create_barman_user.home }}/.ssh/id_rsa
+
+- name: "add postgres ssh key"
+  copy:
+    src={{ postgres_ssh_key_file }}
+    dest={{ postgres_create_barman_user.home }}/.ssh/id_rsa
+    
+
+- name: Add ssh user keys
+  authorized_key: user="{{ item.name }}" key="{{ item.key }}"
+  with_items: ssh_users
+

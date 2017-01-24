@@ -1,5 +1,0 @@
-# Handlers for uchiwa role
----
-
-- name: restart uchiwa
-  service: name=uchiwa state=restarted

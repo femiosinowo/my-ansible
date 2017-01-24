@@ -17,6 +17,19 @@
 
 # Ex 2: A collection of hosts belonging to the 'webservers' group
 
+[consul_servers]
+192.168.100.104
+
+[messaging_servers]
+192.168.100.107
+
+[sensu_servers]
+192.168.100.106
+
+[sensu_masters]
+192.168.100.106
+
+
 [web_servers]
 192.168.100.101
 
@@ -26,17 +39,12 @@
 [db_servers]
 192.168.100.1[03:05]
 
-[consul_servers]
-192.168.100.104
+[barman_servers]
+192.168.100.109
 
-[sensu_servers]
-192.168.100.106
-
-[sensu_masters]
-192.168.100.106
-
-[messaging_servers]
-192.168.100.107
+[postgres_servers]
+192.168.100.110
+192.168.100.111
 
 # If you have multiple hosts following a pattern you can specify
 # them like this:

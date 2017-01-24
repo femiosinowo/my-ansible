@@ -1,0 +1,16 @@
+barman_upstreams:
+  - name: "postgres-master"
+    hostname: "{{ postgresql_server1 }}"
+        
+        
+consul_services:
+  - service:
+      name: "barman"
+      tags:
+        - "barman"
+      port: 5432
+      checks:
+        - name: "Barman health check"
+          tcp: "localhost:5432"
+          interval: "10s"
+          timeout: "1s"

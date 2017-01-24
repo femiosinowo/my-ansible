@@ -43,3 +43,27 @@
     handlers: default
     subscribers: nginx
     interval: 60
+- name: get check-rabbitmq-queue
+  sensu_check:
+    name: check-rabbitmq-queue
+    command: "{{ sensu_ruby_path }} {{ sensu_plugins_directory }}/check-rabbitmq-queue.rb"
+    metric: yes
+    handlers: relay
+    subscribers: RABBITMQ
+    interval: 60
+- name: get check-rabbitmq-alive
+  sensu_check:
+    name: check-rabbitmq-alive
+    command: "{{ sensu_ruby_path }} {{ sensu_plugins_directory }}/check-rabbitmq-alive.rb"
+    metric: yes
+    handlers: relay
+    subscribers: RABBITMQ
+    interval: 60
+- name: get check-rabbitmq-node-health
+  sensu_check:
+    name: check-rabbitmq-node-health.rb
+    command: "{{ sensu_ruby_path }} {{ sensu_plugins_directory }}/check-rabbitmq-node-health.rb"
+    metric: yes
+    handlers: relay
+    subscribers: RABBITMQ
+    interval: 60

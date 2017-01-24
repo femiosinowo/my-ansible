@@ -48,6 +48,7 @@ sensu::server::ip: 192.168.100.106
 sensu::server: "sensu.service.{{consul_datacenter}}.consul"
 rabbitmq::host: "rabbitmq.service.{{consul_datacenter}}.consul"
 
+postgresql_server1: "postgresql.service.{{consul_datacenter}}.consul"
 #sensu_ssl_gen_certs: true
 #sensu_deploy_rabbitmq: false
 

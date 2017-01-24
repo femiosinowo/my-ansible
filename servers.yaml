@@ -33,3 +33,14 @@
   ram: 1024
   ip: 192.168.100.107
   server_role: messaging_server
+- hostname: barman-a
+  box: rhel.7.ansible
+  ram: 1024
+  ip: 192.168.100.109
+  server_role: barman_server  
+- hostname: postgres
+  box: rhel.7.ansible
+  ram: 1024
+  ip: 192.168.100.111
+  server_role: barman_server
+  

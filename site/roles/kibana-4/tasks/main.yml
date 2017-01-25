@@ -11,6 +11,7 @@
   package:
     name: kibana
     state: present
+    
 
 # TODO: Ansible 2.2 adds the systemd module
 - name: Enable Kibana on boot

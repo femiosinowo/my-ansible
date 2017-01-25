@@ -12,6 +12,8 @@ postgresql_archive_mode: on
 postgresql_wal_level: archive
 postgresql_archive_command: "rsync -a %p barman@{{ barman_server }}:{{ barman_home }}/db1/incoming/%f"
 
+firewalld_allow_ports:
+  - { port: 5432 , zone: public , state: enabled }
 
 consul_services:
   - service:
@@ -27,9 +29,3 @@ consul_services:
           
 postgresql_databases:
   - name: example
-  
-postgresql_users:
-  - name: femi
-    password: password
-    database: example
-    priv: ALL/products:ALL

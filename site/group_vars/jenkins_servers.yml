@@ -1,0 +1,21 @@
+---
+jenkins2_http_port: 8081
+jenkins2_plugins:
+  - sonar
+  
+firewalld_allow_ports:
+  - { port: "{{ jenkins2_http_port }}" , zone: public , state: enabled }   
+  
+
+
+consul_services:
+  - service:
+      name: "jenkins"
+      tags:
+        - "jenkins"
+      port: "{{ jenkins2_http_port }}"
+      checks:
+        - name: "Jenkins health check"
+          tcp: "localhost:{{ jenkins2_http_port }}"
+          interval: "10s"
+          timeout: "1s"

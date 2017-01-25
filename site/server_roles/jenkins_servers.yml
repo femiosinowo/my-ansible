@@ -1,0 +1,6 @@
+---
+- hosts: jenkins_servers
+  roles:
+    - jenkins2
+    - sensu
+    - sensu_plugins

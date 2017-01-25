@@ -16,15 +16,20 @@ uchiwa_pass: admin
 sensu_redis_host: localhost
 sensu_redis_port: 6379
 
+firewalld_allow_ports:
+  - { port: "{{ sensu_redis_port }}" , zone: public , state: enabled }
+  - { port: 3000 , zone: public , state: enabled }
+  - { port: 4567 , zone: public , state: enabled }
+  
 consul_services:
   - service:
       name: "redis"
       tags:
         - "redis"
-      port: 6379
+      port: "{{ sensu_redis_port }}"
       checks:
         - name: "redis health check"
-          tcp: "localhost:6379"
+          tcp: "localhost:{{ sensu_redis_port }}"
           interval: "10s"
           timeout: "1s"
   - service:

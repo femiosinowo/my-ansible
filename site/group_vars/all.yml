@@ -15,8 +15,10 @@ resolv_conf_search_domains:
       - node.consul
 
 java_packages:
-  - java-1.8.0-openjdk
+  - "java-1.8.0-openjdk"
 
+
+        
 #consul
 consul_clients_group: all
 consul_bind_interface: eth1
@@ -59,7 +61,7 @@ postgresql_server1: "postgresql.service.{{consul_datacenter}}.consul"
 #sensu_api_host:  "sensu.service.{{consul_datacenter}}.consul"
 
 rabbitmq_host: "rabbitmq.service.{{consul_datacenter}}.consul"
-
+elasticsearch_host: "elasticsearch.service.{{consul_datacenter}}.consul"
 server__sensu: "sensu.service.{{consul_datacenter}}.consul"
 
 sensu_plugins_directory: "/opt/sensu/embedded/bin" #"/etc/sensu/plugins" #"/opt/sensu/embedded/bin" # 
@@ -82,6 +84,16 @@ sensu_client_name: "{{ ansible_hostname }}"
 sensu_client_address: "{{ ansible_eth1.ipv4.address }}"
 sensu_client_subscriptions:
   - ALL
+
+
+
+firewalld_allow_services:
+  service: ssh
+  zone: public
+  permanent: True  
+  state: enabled
+  
+
   
 #beats
 beat_name: filebeat
@@ -110,3 +122,36 @@ beat_config:
        
        
 dynamic_data_store: /etc/dynamic
+
+#logstash
+logstash_configs:
+  - 01-agent-input.conf
+  - 02-agent-output.conf
+  - 03-agent-filter.conf
+
+logstash_inputs: |
+  file {
+    type => "syslog"
+    path => [ "/var/log/messages", "/var/log/syslog", "/var/log/*.log" ]
+    sincedb_path => "/var/cache/logstash/syslog.sincedb"
+  }
+
+#logstash_filters: |
+#  grok { match => [ "message", "%{HTTPDATE:[@metadata][timestamp]}" ] }
+#  date { match => [ "[@metadata][timestamp]", "dd/MMM/yyyy:HH:mm:ss Z" ] }
+
+logstash_outputs: |
+    rabbitmq {
+      exchange => "exchangelogstash"
+      exchange_type => "topic"
+      key => "logs-%{host}"
+      workers => 2
+      durable => true
+      persistent => true
+      user  => "logstash"
+      password => "logstash"
+      host => ["{{ rabbitmq_host }}"]
+      port  => 5672
+      vhost => "/logstash"
+    }
+    stdout { codec => rubydebug }

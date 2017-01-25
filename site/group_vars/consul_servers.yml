@@ -9,7 +9,8 @@ consul_install_nginx: true
 consul_node_role: bootstrap
 consul_group_name: consul_servers
 
-
+firewalld_allow_ports:
+  - { port: 8500 , zone: public , state: enabled } 
 
 consul_services:
   - service:

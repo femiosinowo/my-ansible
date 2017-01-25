@@ -5,12 +5,12 @@
   ip: 192.168.100.100
 - hostname: web1a
   box: rhel.7.ansible
-  ram: 512
+  ram: 1024
   ip: 192.168.100.101
   server_role: web_server
-- hostname: elka
+- hostname: elk-a
   box: rhel.7.ansible
-  ram: 512
+  ram: 1024
   ip: 192.168.100.102
   server_role: elkstack_server
 - hostname: db
@@ -43,4 +43,8 @@
   ram: 1024
   ip: 192.168.100.111
   server_role: postgres_server
+- hostname: jenkins
+  box: rhel.7.ansible
+  ram: 1024
+  ip: 192.168.100.112
   

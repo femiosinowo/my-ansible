@@ -8,6 +8,7 @@
     - java
     - consul
     - modules-extras
+    - logstash
 
     #- beats
     

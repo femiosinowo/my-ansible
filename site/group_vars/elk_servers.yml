@@ -1,27 +1,114 @@
 #elasticsearch
 es_instance_name: "node1" 
+es_network_host: "{{ ansible_eth1.ipv4.address }}"
+
+es_config: {
+      #node.name: "node1", 
+      #cluster.name: "custom-cluster",
+      network.host: "0.0.0.0",
+      network.publish_host: "_local:ipv4_",
+      #discovery.zen.ping.unicast.hosts: "localhost:9301",
+      #http.port: 9201,
+      #transport.tcp.port: 9301,
+      #node.data: false,
+      #node.master: true,
+      #bootstrap.mlockall: true,
+ #     discovery.zen.ping.multicast.enabled: false 
+     }
+        
 es_plugins:
-  - plugin: elasticsearch/license
-    version: latest
   - plugin: mobz/elasticsearch-head
-    version: latest
+    version: 2.3.4
 #logstash
-logstash_listen_port_beats: 5044
-logstash_elasticsearch_hosts:
-   - http://localhost:9200
-logstash_install_plugins:
-   - logstash-input-beats
+#logstash_listen_port_beats: 5044
+#logstash_elasticsearch_hosts:
+#   - http://localhost:9200
+logstash_plugins:
    - logstash-output-rabbitmq
    - logstash-input-rabbitmq
+   - logstash-input-beats
+   
 logstash_enabled_on_boot: yes
 logstash_local_syslog_path: /var/log/syslog
 logstash_monitor_local_syslog: true
 
+logstash_configs:
+  - 01-server-input.conf
+  - 02-server-output.conf
+  - 03-server-filter.conf
+
+logstash_inputs: |
+    file {
+      type => "syslog"
+      path => [ "/var/log/messages", "/var/log/syslog", "/var/log/*.log" ]
+      sincedb_path => "/var/cache/logstash/syslog.sincedb"
+    }
+  
+    rabbitmq {
+    user => 'logstash'
+    password => 'logstash'
+    durable => true
+    exchange => 'exchangelogstash'
+    host => ["{{ rabbitmq_host }}"]
+    key => 'logs-%{host}'
+    port => 5672
+    queue => 'queuelogstash'
+    vhost => '/logstash'
+    }
+
+#logstash_filters: |
+#  if [type] == "syslog" {
+#    grok {
+#      match => [ "message",  "%{SYSLOGBASE2} %{GREEDYDATA:syslog_message}" ]
+#      add_field => [ "received_at", "%{@timestamp}" ]
+#      add_field => [ "received_from", "%{host}" ]
+#      break_on_match => false
+#    }
+#    grok {
+#      match => [ "syslog_message", "Accepted %{WORD:auth_method} for %{USER:username} from %{IP:src_ip} port %{INT:src_port} ssh2" ]
+#      match => [ "syslog_message", "Failed %{WORD:auth_method} for %{USER:username} from %{IP:src_ip} port %{INT:src_port} ssh2" ]
+#      match => [ "syslog_message", "Failed %{WORD:auth_method} for invalid user %{USER:username} from %{IP:src_ip} port %{INT:src_port} ssh2" ]
+#      match => [ "syslog_message", "error retrieving information about user %{USER:username}" ]
+#      match => [ "syslog_message", "Invalid user %{USER:username} from %{IP:src_ip}" ]
+#      match => [ "syslog_message", "Received disconnect from %{IP:src_ip}: 11: disconnected by user" ]
+#      match => [ "syslog_message", "session opened for user %{USER:username}" ]
+#      match => [ "syslog_message", "session closed for user %{USER:username}" ]
+#      match => [ "syslog_message", "\(%{USER:username}\) CMD \(%{DATA:cronscript}\)" ]
+#      match => [ "syslog_message", "%{WORD:auth_method}: invalid user %{USER:username}" ]
+#      match => [ "syslog_message", "Address %{IP:src_ip} maps to %{HOST:hostname}, but this does not map back to the address - POSSIBLE BREAK-IN ATTEMPT!" ]
+#      break_on_match => false
+#    }
+#    date {
+#      match => [ "timestamp", "MMM d HH:mm:ss", "MMM dd HH:mm:ss" ]
+#    }
+#    geoip {
+#      source => "src_ip"
+#      target => "geoip"
+#      add_field => [ "[geoip][coordinates]", "%{[geoip][longitude]}" ]
+#      add_field => [ "[geoip][coordinates]", "%{[geoip][latitude]}" ]
+#    }
+#    mutate {
+#      convert => [ "[geoip][coordinates]", "float"]
+#    }
+#  }
+
+logstash_outputs: |
+   elasticsearch {
+      hosts => "{{ elasticsearch_host }}:9200"
+      index => "logstash-%{+YYYY.MM.dd}"
+    }  
+    stdout {  codec => rubydebug   }
+  
 #Kibana
 kibana_version: 4.5
-elasticsearch_url: http://localhost:9200
+elasticsearch_url: "http://{{ elasticsearch_host }}:9200"
 kibana_port: 5601
 
+
+firewalld_allow_ports:
+  - { port: 9200 , zone: public , state: enabled }
+  - { port: 5044 , zone: public , state: enabled }
+  - { port: 5601 , zone: public , state: enabled }  
 
 #consul
 consul_services:
@@ -29,7 +116,6 @@ consul_services:
       name: "elasticsearch"
       tags:
         - "elasticsearch"
-      address: "localhost"
       port: 9200
       checks:
         - name: "elasticsearch health check"
@@ -40,7 +126,6 @@ consul_services:
       name: "logstash"
       tags:
         - "logstash"
-      address: "localhost"
       port: 5044
       checks:
         - name: "logstash health check"
@@ -51,7 +136,6 @@ consul_services:
       name: "kibana"
       tags:
         - "kibana"
-      address: "localhost"
       port: 5601
       checks:
         - name: "kibana health check"

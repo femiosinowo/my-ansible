@@ -16,7 +16,10 @@ https://github.com/jtyr/ansible-uchiwa.git
 ansible-galaxy install sbaerlocher.redis
 https://github.com/sensu-plugins/sensu-plugins-ansible
 https://github.com/clarkf/ansible-sensu
-
+https://github.com/ohtomi/ansible-role-jenkins2.git
 ansible-galaxy install maanas.ansible-role-wget
+$ ansible-galaxy install marcelnijenhof.firewalld
 
 https://github.com/ansible/ansible-modules-extras
+
+ansible-galaxy install torian.logstash

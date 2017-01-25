@@ -4,6 +4,6 @@
     - nginx
     - pip
     - elasticsearch
-    - logstash
+    #- logstash
     - kibana-4
     - elk

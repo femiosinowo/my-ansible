@@ -19,6 +19,7 @@
 
 [consul_servers]
 192.168.100.104
+192.168.100.120
 
 [messaging_servers]
 192.168.100.107

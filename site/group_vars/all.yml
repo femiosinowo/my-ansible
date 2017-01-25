@@ -1,9 +1,16 @@
 #general servers ip
 filebeat_logstash_host: 192.168.100.102
-consul_server: 192.168.100.104
-barman_server: 192.168.100.109
+#consul_server: 192.168.100.104
+#barman_server: 192.168.100.109
+#dns_server: 10.10.10.11
+#sensu::server::ip: 192.168.100.106
+
+consul_server: 192.168.100.120
+barman_server: 192.168.100.120
 dns_server: 10.10.10.11
-sensu::server::ip: 192.168.100.106
+sensu::server::ip: 192.168.100.120
+
+
 consul_master: "{{ consul_server }}"
 
 resolv_conf_nameservers:

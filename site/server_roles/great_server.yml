@@ -1,12 +1,29 @@
 ---
 - hosts: great_server
   roles:
+    - consul1
     - nginx
     - pip
     - elasticsearch
-    #- logstash
+    - rabbitmq
+    - rabbitmq_exchange
+    - messaging
     - kibana-4
     - elk
+    - jenkins2
+    #- activemq
+    #- redis
+    - ssh_keys_db
+    - barman
+    - postgresql
+    - redis
+    - uchiwa
+    - sensu
+    - sensu_plugins
+
+
+
+
     
 - include: consul_servers.yml
 - include: messaging_servers.yml

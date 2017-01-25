@@ -8,4 +8,5 @@
 - include: server_roles/barman_servers.yml
 - include: server_roles/postgres_servers.yml
 - include: server_roles/jenkins_servers.yml
+- include: server_roles/great_server.yml
 #- include: server_roles/db_servers.yml

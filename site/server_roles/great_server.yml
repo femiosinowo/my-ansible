@@ -1,0 +1,17 @@
+---
+- hosts: great_server
+  roles:
+    - nginx
+    - pip
+    - elasticsearch
+    #- logstash
+    - kibana-4
+    - elk
+    
+- include: consul_servers.yml
+- include: messaging_servers.yml
+- include: sensu_servers.yml
+- include: barman_servers.yml
+- include: jenkins_servers.yml
+- include: postgres_servers.yml
+- include: elk_servers.yml

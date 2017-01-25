@@ -1,0 +1,295 @@
+consul_is_server: "true"
+consul_bootstrap: "true"
+consul_is_ui: true
+
+consul_ui_server_port: 85
+consul_install_nginx: true
+
+
+barman_upstreams:
+  - name: "db1"
+    hostname: "{{ postgresql_server1 }}"
+
+consul_node_role: bootstrap
+consul_group_name: consul_servers
+
+###ELK
+
+#Kibana
+kibana_version: 4.5
+elasticsearch_url: "http://{{ elasticsearch_host }}:9200"
+kibana_port: 5601
+
+#elasticsearch
+es_instance_name: "node1" 
+es_network_host: "{{ ansible_eth1.ipv4.address }}"
+
+es_config: {
+      #node.name: "node1", 
+      #cluster.name: "custom-cluster",
+      network.host: "0.0.0.0",
+      network.publish_host: "_local:ipv4_",
+      #discovery.zen.ping.unicast.hosts: "localhost:9301",
+      #http.port: 9201,
+      #transport.tcp.port: 9301,
+      #node.data: false,
+      #node.master: true,
+      #bootstrap.mlockall: true,
+ #     discovery.zen.ping.multicast.enabled: false 
+     }
+        
+es_plugins:
+  - plugin: mobz/elasticsearch-head
+    version: 2.3.4
+#logstash
+#logstash_listen_port_beats: 5044
+#logstash_elasticsearch_hosts:
+#   - http://localhost:9200
+logstash_plugins:
+   - logstash-output-rabbitmq
+   - logstash-input-rabbitmq
+   - logstash-input-beats
+   
+logstash_enabled_on_boot: yes
+logstash_local_syslog_path: /var/log/syslog
+logstash_monitor_local_syslog: true
+
+logstash_configs:
+  - 01-server-input.conf
+  - 02-server-output.conf
+  - 03-server-filter.conf
+
+
+##ELK
+
+##JENKINS
+
+jenkins2_http_port: 8081
+jenkins2_plugins:
+  - sonar
+  
+##JENKINS
+
+##MESSAGING
+rabbitmq_vhosts: ['/','/sensu','/logstash']   
+rabbitmq_enabled: yes
+rabbitmq_plugins:                       # Ensure the plugins is installed
+  - rabbitmq_management
+
+rabbitmq_users:                         # Ensure the users added
+  - user: admin
+    password: admin
+    vhost: /
+    configure_priv: .*
+    read_priv: .*
+    write_priv: .*
+    tags: administrator
+  - user: sensu
+    password: sensu
+    vhost: /sensu
+    configure_priv: .*
+    read_priv: .*
+    write_priv: .*
+    tags: administrator
+  - user: logstash
+    password: logstash
+    vhost: /logstash
+    configure_priv: .*
+    read_priv: .*
+    write_priv: .*
+    tags: administrator
+
+##MESSAGING
+
+##POSTGRESQL
+
+postgresql_pg_hba_conf_default:
+ - { type: local, database: all, user: all, address: '', method: peer  }
+ - { type: host,  database: all, user: all, address: "{{ barman_server }}/32", method: trust }
+ #- { type: host,  database: all, user: all,                         address: "::1/128",      method: md5 }
+
+#barman switch-xlog --force --archive db1
+
+postgresql_listen_addresses:
+  - "*"
+postgresql_archive_mode: on
+postgresql_wal_level: archive
+postgresql_archive_command: "rsync -a %p barman@{{ barman_server }}:{{ barman_home }}/db1/incoming/%f"
+
+
+          
+postgresql_databases:
+  - name: example
+  
+##END POSTGRESQL
+##SENSU
+sensu_install_server: true
+sensu_install_api: true
+
+redis_bind_interface: 0.0.0.0
+
+
+sensu_client_subscriptions:
+  - ALL
+  - REDIS
+  - SENSU
+
+uchiwa_sensu_site: "{{consul_datacenter}}"
+uchiwa_user: admin
+uchiwa_pass: admin
+
+sensu_redis_host: localhost
+sensu_redis_port: 6379
+
+##END SENSU
+
+
+firewalld_allow_ports:
+  - { port: 8300/tcp , zone: public , state: enabled } 
+  - { port: 8301/tcp , zone: public , state: enabled } 
+  - { port: 8302/tcp , zone: public , state: enabled }
+  - { port: 8500/tcp , zone: public , state: enabled }
+  - { port: 8600/udp , zone: public , state: enabled }
+  - { port: 8543/tcp , zone: public , state: enabled }
+  - { port: 5432/tcp , zone: public , state: enabled }
+  - { port: 8301/tcp , zone: public , state: enabled }
+  - { port: 9200/tcp , zone: public , state: enabled }
+  - { port: 5044/tcp , zone: public , state: enabled }
+  - { port: 5601/tcp , zone: public , state: enabled }
+  - { port: 8301/tcp , zone: public , state: enabled }  
+  - { port: "{{ jenkins2_http_port }}/tcp" , zone: public , state: enabled }   
+  - { port: 8301/tcp , zone: public , state: enabled }
+  - { port: "5672/tcp"   , zone: public , permanent: True, state: enabled }
+  - { port: "15672/tcp"   , zone: public , permanent: True, state: enabled }
+  - { port: "61616/tcp"  , zone: public, permanent: True , state: enabled }
+  - { port: "61613/tcp"  , zone: public , permanent: True , state: enabled }  
+  - { port: 8301/tcp , zone: public , state: enabled }
+  - { port: 5432/tcp , zone: public , state: enabled }
+  - { port: 8301/tcp , zone: public , state: enabled } 
+  - { port: "{{ sensu_redis_port }}/tcp" , zone: public , state: enabled }
+  - { port: 3000/tcp , zone: public , state: enabled }
+  - { port: 4567/tcp , zone: public , state: enabled }
+  - { port: 8301/tcp , zone: public , state: enabled } 
+consul_services:
+  - service:
+      name: "consul_server"
+      tags:
+        - "consul_server"
+      port: 8500
+      checks:
+        - name: "RabbitMQ health check"
+          tcp: "localhost:8500"
+          interval: "10s"
+          timeout: "1s"
+  - service:
+      name: "barman"
+      tags:
+        - "barman"
+      port: 5432
+      checks:
+        - name: "Barman health check"
+          tcp: "localhost:5432"
+          interval: "10s"
+          timeout: "1s"
+  - service:
+      name: "elasticsearch"
+      tags:
+        - "elasticsearch"
+      port: 9200
+      checks:
+        - name: "elasticsearch health check"
+          tcp: "localhost:9200"
+          interval: "10s"
+          timeout: "1s"
+  - service:
+      name: "kibana"
+      tags:
+        - "kibana"
+      port: 5601
+      checks:
+        - name: "kibana health check"
+          http: "http://localhost:5601"
+          interval: "10s"
+          timeout: "1s"     
+  - service:
+      name: "jenkins"
+      tags:
+        - "jenkins"
+      port: "{{ jenkins2_http_port }}"
+      checks:
+        - name: "Jenkins health check"
+          tcp: "localhost:{{ jenkins2_http_port }}"
+          interval: "10s"
+          timeout: "1s" 
+  - service:
+      name: "rabbitmq"
+      tags:
+        - "rabbitmq"
+      port: 5672
+      checks:
+        - name: "RabbitMQ health check"
+          tcp: "localhost:5672"
+          interval: "10s"
+          timeout: "1s"
+  - service:
+      name: "activemq"
+      tags:
+        - "activemq"
+      port: 61616
+      checks:
+        - name: "ActiveMQ health check"
+          tcp: "localhost:61616"
+          interval: "10s"
+          timeout: "1s"
+  - service:
+      name: "activemqstomp"
+      tags:
+        - "activemqstomp"
+      port: 61613
+      checks:
+        - name: "ActiveMQ Stomp health check"
+          tcp: "localhost:61613"
+          interval: "10s"
+          timeout: "1s"
+  - service:
+      name: "postgresql"
+      tags:
+        - "postgresql"
+      port: 5432
+      checks:
+        - name: "PostgreSql health check"
+          tcp: "localhost:5432"
+          interval: "10s"
+          timeout: "1s"   
+  - service:
+      name: "redis"
+      tags:
+        - "redis"
+      port: "{{ sensu_redis_port }}"
+      checks:
+        - name: "redis health check"
+          tcp: "localhost:{{ sensu_redis_port }}"
+          interval: "10s"
+          timeout: "1s"
+  - service:
+      name: "uchiwa"
+      tags:
+        - "uchiwa"
+      port: 3000
+      checks:
+        - name: "Uchiwa health check"
+          tcp: "localhost:3000"
+          interval: "10s"
+          timeout: "1s"
+  - service:
+      name: "sensu"
+      tags:
+        - "sensu"
+      port: 4567
+      checks:
+        - name: "Sensu Stomp health check"
+          tcp: "localhost:4567"
+          interval: "10s"
+          timeout: "1s"               
+#"{{ ansible_fqdn }}"
+#"{{ inventory_hostname }}"

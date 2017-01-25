@@ -3,5 +3,3 @@
   roles:
     - ssh_keys_db
     - postgresql
-    - sensu
-    - sensu_plugins

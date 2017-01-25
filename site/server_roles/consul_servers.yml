@@ -3,5 +3,3 @@
   roles:
     - consul
     - consul1
-    - sensu
-    - sensu_plugins

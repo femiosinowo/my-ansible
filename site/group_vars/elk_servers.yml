@@ -63,16 +63,6 @@ consul_services:
           interval: "10s"
           timeout: "1s"
   - service:
-      name: "logstash"
-      tags:
-        - "logstash"
-      port: 5044
-      checks:
-        - name: "logstash health check"
-          tcp: "localhost:5044"
-          interval: "10s"
-          timeout: "1s"
-  - service:
       name: "kibana"
       tags:
         - "kibana"

@@ -28,9 +28,12 @@ rabbitmq_users:                         # Ensure the users added
     tags: administrator
 
 firewalld_allow_ports:
-  - { port: 5672 , zone: public , state: enabled }
-  - { port: 61616 , zone: public , state: enabled }
-  - { port: 61613 , zone: public , state: enabled }  
+  - { port: "5672/tcp"   , zone: public , permanent: True, state: enabled }
+  - { port: "15672/tcp"   , zone: public , permanent: True, state: enabled }
+  - { port: "61616/tcp"  , zone: public, permanent: True , state: enabled }
+  - { port: "61613/tcp"  , zone: public , permanent: True , state: enabled }  
+  - { port: 8301/tcp , zone: public , state: enabled }
+
   
 rabbitmq_vhosts: ['/','/sensu','/logstash']                     # Ensure the vhosts are exists
 

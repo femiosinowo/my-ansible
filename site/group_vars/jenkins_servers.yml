@@ -4,7 +4,8 @@ jenkins2_plugins:
   - sonar
   
 firewalld_allow_ports:
-  - { port: "{{ jenkins2_http_port }}" , zone: public , state: enabled }   
+  - { port: "{{ jenkins2_http_port }}/tcp" , zone: public , state: enabled }   
+  - { port: 8301/tcp , zone: public , state: enabled }
   
 
 

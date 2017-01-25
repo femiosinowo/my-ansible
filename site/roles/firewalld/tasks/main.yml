@@ -13,6 +13,7 @@
     state={{ item.state | default ("enabled") }}
   with_items: "{{ firewalld_allow_services }}"
   notify: firewalld complete reload
+  
 - name: Add firewalld rules for ports from vars
   firewalld:
     port={{ item.port }}

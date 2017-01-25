@@ -13,7 +13,8 @@ postgresql_wal_level: archive
 postgresql_archive_command: "rsync -a %p barman@{{ barman_server }}:{{ barman_home }}/db1/incoming/%f"
 
 firewalld_allow_ports:
-  - { port: 5432 , zone: public , state: enabled }
+  - { port: 5432/tcp , zone: public , state: enabled }
+  - { port: 8301/tcp , zone: public , state: enabled }
 
 consul_services:
   - service:

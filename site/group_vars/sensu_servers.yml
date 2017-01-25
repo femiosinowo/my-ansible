@@ -17,9 +17,10 @@ sensu_redis_host: localhost
 sensu_redis_port: 6379
 
 firewalld_allow_ports:
-  - { port: "{{ sensu_redis_port }}" , zone: public , state: enabled }
-  - { port: 3000 , zone: public , state: enabled }
-  - { port: 4567 , zone: public , state: enabled }
+  - { port: "{{ sensu_redis_port }}/tcp" , zone: public , state: enabled }
+  - { port: 3000/tcp , zone: public , state: enabled }
+  - { port: 4567/tcp , zone: public , state: enabled }
+  - { port: 8301/tcp , zone: public , state: enabled }
   
 consul_services:
   - service:

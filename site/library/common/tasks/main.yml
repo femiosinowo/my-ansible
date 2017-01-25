@@ -1,5 +1,8 @@
 ---
 # file: roles/common/tasks/main.yml
+- name: Remove Network Manager
+  yum: name=NetworkManager state=absent
+      
 - name: install policycoreutils-python
   package:
     name: policycoreutils-python

@@ -10,8 +10,14 @@ consul_node_role: bootstrap
 consul_group_name: consul_servers
 
 firewalld_allow_ports:
-  - { port: 8500 , zone: public , state: enabled } 
+  - { port: 8300/tcp , zone: public , state: enabled } 
+  - { port: 8301/tcp , zone: public , state: enabled } 
+  - { port: 8302/tcp , zone: public , state: enabled }
+  - { port: 8500/tcp , zone: public , state: enabled }
+  - { port: 8600/udp , zone: public , state: enabled }
+  - { port: 8543/tcp , zone: public , state: enabled }
 
+  
 consul_services:
   - service:
       name: "consul_server"

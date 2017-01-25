@@ -3,7 +3,8 @@ barman_upstreams:
     hostname: "{{ postgresql_server1 }}"
 
 firewalld_allow_ports:
-  - { port: 5432 , zone: public , state: enabled }       
+  - { port: 5432/tcp , zone: public , state: enabled }
+  - { port: 8301/tcp , zone: public , state: enabled }
         
 consul_services:
   - service:

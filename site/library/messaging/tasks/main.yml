@@ -2,14 +2,16 @@
     name: requests
     state: latest
 
+- name: selinux port open 15672
+  shell: setsebool -P nis_enabled 1
+  args:
+   executable: /bin/bash
 
-
-#- name: selinux port open 15672
-#  raw: setsebool -P nis_enabled 1
-#  run_once: true
-  
-- name: restart rabbitmq-server
-  raw: systemctl restart rabbitmq-server
+- name:  restart rabbitmq-server
+  shell: systemctl restart rabbitmq-server
+  args:
+   executable: /bin/bash
+   
 
   
   

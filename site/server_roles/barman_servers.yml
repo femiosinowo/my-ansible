@@ -3,3 +3,4 @@
   roles:
     - ssh_keys_db
     - barman
+    - postgresql

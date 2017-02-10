@@ -51,3 +51,11 @@
   box: rhel.7.ansible
   ram: 5120
   ip: 192.168.100.120  
+- hostname: ha1
+  box: rhel.7.ansible
+  ram: 1024
+  ip: 192.168.100.121
+- hostname: ha2
+  box: rhel.7.ansible
+  ram: 1024
+  ip: 192.168.100.122  

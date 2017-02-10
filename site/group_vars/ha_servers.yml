@@ -1,0 +1,6 @@
+consul_services: []
+
+firewalld_allow_services:
+  - { service: "ssh" ,  zone: public ,  permanent: True  ,  state: enabled  }
+  - { service: "high-availability" ,  zone: public ,  permanent: True  ,  state: enabled  }
+  

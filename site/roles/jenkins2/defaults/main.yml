@@ -68,5 +68,7 @@ jenkins2_suggested_plugins:
   - workflow-aggregator
   - github-organization-folder
   - ws-cleanup
+  - xvfb
+  - test-results-analyzer
 
 jenkins2_plugins: []

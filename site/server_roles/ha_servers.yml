@@ -1,0 +1,4 @@
+---
+- hosts: ha_servers
+  roles:
+    - ha_cluster

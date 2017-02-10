@@ -27,6 +27,5 @@
   notify:
     - restart dnsmasq
   
-
-
-
+- name: be sure dnsmasq is running and enabled
+  service: name=dnsmasq state=started enabled=yes

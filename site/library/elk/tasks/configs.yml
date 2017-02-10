@@ -6,5 +6,5 @@
     group: root
     mode: 0644
   with_items:
-    logstash_configs
+    "{{ logstash_configs }}"
   notify: restart logstash

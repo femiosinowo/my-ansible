@@ -11,24 +11,11 @@
     - kibana-4
     - elk
     - jenkins2
-    #- activemq
-    #- redis
+    - activemq
     - ssh_keys_db
     - barman
     - postgresql
     - redis
     - uchiwa
-    - sensu
-    - sensu_plugins
-
-
-
-
-    
-- include: consul_servers.yml
-- include: messaging_servers.yml
-- include: sensu_servers.yml
-- include: barman_servers.yml
-- include: jenkins_servers.yml
-- include: postgres_servers.yml
-- include: elk_servers.yml
+    #- sensu
+    #- sensu_plugins

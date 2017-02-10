@@ -1,5 +1,5 @@
 ---
-
+# barman switch-xlog --force --archive db
 
 - name: create barman incoming directories
   file:
@@ -8,6 +8,16 @@
     owner={{ barman_user }}
     group={{ barman_user }}
   with_items: barman_upstreams
+
+
+- name: create restore files
+  template:
+    dest={{ barman_create_barman_user.home }}/{{ item.name }}.sh
+    src=restore.rb.j2
+    owner={{ barman_user }}
+    group={{ barman_user }}
+    mode="u+x"
+  with_items: "{{ barman_upstreams }}"
 
 
 

@@ -13,6 +13,16 @@
     state: present
   become: yes
 
+- name: GoogleChrome YUM Repository
+  yum_repository:
+    name: google-chrome
+    description: GoogleChrome YUM Repository
+    baseurl: http://dl.google.com/linux/chrome/rpm/stable/x86_64
+    gpgcheck: yes
+    gpgkey: https://dl.google.com/linux/linux_signing_key.pub
+    state: present
+  become: yes
+  
 - name: Jenkins YUM Repository
   yum_repository:
     name: jenkinsrepo
@@ -28,3 +38,20 @@
     disable_gpg_check: "{{ jenkins2_disable_gpg_check }}"
     state: present
   become: yes
+
+- name: google-chrome-stable Installation
+  yum:
+    name: "google-chrome-stable"
+    state: present
+  become: yes
+  with_items:
+    - google-chrome-stable
+    - GConf2
+  
+- name: Create Logstash filters.
+  copy:
+    src: "chromedriver"
+    dest: "/var/lib/jenkins"
+    owner: jenkins
+    group: jenkins
+    mode: 0644

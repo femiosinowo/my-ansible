@@ -19,7 +19,6 @@
 
 [consul_servers]
 192.168.100.104
-192.168.100.120
 
 [messaging_servers]
 192.168.100.107
@@ -27,12 +26,6 @@
 [sensu_servers]
 192.168.100.106
 
-[sensu_masters]
-192.168.100.106
-
-
-[web_servers]
-192.168.100.101
 
 [elk_servers]
 192.168.100.102
@@ -44,7 +37,6 @@
 192.168.100.109
 
 [postgres_servers]
-192.168.100.110
 192.168.100.111
 
 [jenkins_servers]
@@ -52,6 +44,10 @@
 
 [great_server]
 192.168.100.120
+
+[ha_servers]
+192.168.100.121
+192.168.100.122
 
 # If you have multiple hosts following a pattern you can specify
 # them like this:

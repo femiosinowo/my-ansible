@@ -1,0 +1,20 @@
+#- name: "add repo"
+#  copy:
+#    src=ha.repo
+#    dest=/etc/yum.repos.d/
+
+
+- name: "install pacemaker corosync crmsh"
+  yum: name={{ item }} state=present
+  with_items:
+  - pacemaker
+  - pcs
+
+  
+- name: be sure pcsd is running and enabled
+  service: name=pcsd state=started enabled=yes
+  
+  
+- user:
+    name: hacluster
+    password: "$6$rounds=656000$rWxf0XpHj0fK/H5S$Q4QyE7K525BrlBsr6ieCQ15sF.o4zTRVdDHEYWBAjK.P6Wi8JNlN2LY8BYqFTIyNfNlcMknn8BIDZXht5XXfk/"

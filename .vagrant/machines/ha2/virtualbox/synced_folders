@@ -1,0 +1,1 @@
+{"virtualbox":{"/etc/ansible":{"owner":"root","group":"root","mount_options":["dmode=755,fmode=755"],"guestpath":"/etc/ansible","hostpath":"C:/Users/femio/Desktop/ansible/site","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"C:/Users/femio/Desktop/ansible","disabled":false,"__vagrantfile":true}}}

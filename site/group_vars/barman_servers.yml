@@ -1,6 +1,8 @@
 barman_upstreams:
   - name: "db1"
     hostname: "{{ postgresql_server1 }}"
+    file_name: "restore_db1"
+    postgresl_data_path: "/var/lib/pgsql/data"
 
 firewalld_allow_ports:
   - { port: 5432/tcp , zone: public , state: enabled }

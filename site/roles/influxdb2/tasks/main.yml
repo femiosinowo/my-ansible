@@ -1,0 +1,51 @@
+---
+
+- name: Install influxdb
+  include: "install-{{ ansible_os_family|lower }}.yml"
+
+- name: Get influxdb user info
+  user: name=influxdb
+  register: info
+
+- name: Stop influxdb before migrating home dir
+  service: name=influxdb state=stopped
+  when: influxdb_home_dir != info.home
+
+- name: Migrate influxdb home dir to desired location
+  user:
+    name:  "{{ influxdb_user }}"
+    home:  "{{ influxdb_home_dir }}"
+    move_home: yes
+  when: influxdb_home_dir != info.home 
+  notify: Restart influxdb
+
+- name: Create influxdb config file
+  template:
+    src:   influxdb.conf.j2
+    dest:  /etc/influxdb/influxdb.conf
+    owner: root
+    group: root
+    mode:  0644
+  notify: Restart influxdb
+
+- name: Create influxdb service startup config file
+  template:
+    src:   etc.default.influxdb.j2
+    dest:  /etc/default/influxdb
+    owner: root
+    group: root
+    mode:  0644
+  notify: Restart influxdb
+
+- name: Create influxdb logrotate config
+  template:
+    src:   influxdb.logrotate.j2
+    dest:  /etc/logrotate.d/influxdb
+    owner: root
+    group: root
+    mode:  0644
+
+- name: Start influxdb
+  service: name=influxdb enabled=yes state=started
+  
+#http://192.168.100.123:8086/query?q=CREATE+DATABASE+%22collectd%22&db=_internal

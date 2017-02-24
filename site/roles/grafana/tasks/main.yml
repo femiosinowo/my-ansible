@@ -1,0 +1,71 @@
+---
+- name: Install Grafana
+  yum: 
+    name: "{{item}}" 
+    state: installed
+  with_items: "{{grafana_packages}}"
+  tags: package
+
+- name: Configure Grafana
+  template: 
+    src: grafana.ini.j2
+    dest: /etc/grafana/grafana.ini
+  notify: restart grafana
+
+- name: Install Grafana service
+  service: 
+    name: grafana-server 
+    state: started
+    enabled: yes
+
+- name: wait for grafana port
+  wait_for:
+    port: "{{ grafana_port }}"
+
+- name: get datasources
+  uri:
+    HEADER_Content-Type: application/json
+    url: http://localhost:{{ grafana_port }}/api/datasources
+    method: GET
+    user: admin
+    password: "{{ grafana_admin_password }}"
+    force_basic_auth: yes
+  tags: datasource
+  register: datasources
+  when: grafana_data_source is defined
+
+- name: set datasource fact
+  set_fact:
+    grafana_datasources: "{{ datasources.json | default([]) | map(attribute='name') | list }}"
+  tags: datasource
+
+- name: Setup test datasource
+  uri:
+    HEADER_Content-Type: application/json
+    url: http://localhost:{{ grafana_port }}/api/datasources
+    method: POST
+    user: admin
+    password: "{{ grafana_admin_password }}"
+    body: "{{ grafana_data_source | to_json }}"
+    body_format: json
+    force_basic_auth: yes
+  tags: datasource
+  register: result
+  changed_when: result.status == 200
+  when: grafana_data_source is defined and grafana_data_source.name not in grafana_datasources
+
+- name: Configure test dashboard
+  uri:
+    HEADER_Content-Type: application/json
+    url: http://localhost:{{ grafana_port }}/api/dashboards/db
+    method: POST
+    user: admin
+    password: "{{ grafana_admin_password }}"
+    body: "{{ lookup('file',grafana_custom_dashboard) }}"
+    body_format: json
+    force_basic_auth: yes
+  tags: dashboard
+  register: result
+  changed_when: result.status == 200
+  failed_when: result.status != 200 and result.status != 412
+  when: grafana_custom_dashboard

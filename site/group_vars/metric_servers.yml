@@ -1,0 +1,109 @@
+---
+
+#LoadPlugin rrdtool
+
+influxdb_users: []
+  
+influxdb_config__collectd__enabled: true
+influxdb_config__collectd__bind_address: ":25826"
+influxdb_config__collectd__database: "collectd"
+influxdb_config__collectd__batch_size: 5000
+influxdb_config__collectd__batch_pending: 10
+influxdb_config__collectd__batch_timeout: "10s"
+influxdb_config__collectd__read_buffer: 0
+influxdb_config__collectd__typesdb: "/usr/share/collectd/types.db"
+influxdb_databases:
+  - "_internal"
+  - "grafana"
+  - "collectd"
+  - "telegraf"
+  
+grafana_server_http_port: 3001
+
+grafana_ip: "0.0.0.0"
+grafana_port: 3001
+grafana_admin_password: "admin"
+grafana_secret_key: "CHANGEME"
+grafana_data_source: {
+  isDefault: yes,
+  database: collectd,
+  user: "admin",
+  password: "admin",
+  name: collectd,
+  type: influxdb,
+  url: 'http://localhost:8086',
+  access: proxy,
+  basicAuth: false
+}
+
+grafana_data_source: {
+  isDefault: no,
+  database: telegraf,
+  user: "admin",
+  password: "admin",
+  name: telegraf,
+  type: influxdb,
+  url: 'http://localhost:8086',
+  access: proxy,
+  basicAuth: false
+}
+
+#consul
+consul_services:
+  - service:
+      name: "grafana"
+      tags:
+        - "grafana"
+      port: 3001
+      checks:
+        - name: "grafana health check"
+          tcp: "localhost:3001"
+          interval: "10s"
+          timeout: "1s"
+  - service:
+      name: "influxdb"
+      tags:
+        - "influxdb"
+      port: 8083
+      checks:
+        - name: "InfluxDB health check"
+          http: "http://localhost:8083"
+          interval: "10s"
+          timeout: "1s"
+  - service:
+      name: "influxdb-admin"
+      tags:
+        - "influxdb-admin"
+      port: 8086
+      checks:
+        - name: "InfluxDB health check"
+          http: "http://localhost:8086"
+          interval: "10s"
+          timeout: "1s"
+  - service:
+      name: "collectd"
+      tags:
+        - "collectd"
+      port: 25826
+      checks:
+        - name: "CollectD health check"
+          udp: "localhost:25826"
+          interval: "10s"
+          timeout: "1s"          
+  - service:
+      name: "statsd"
+      tags:
+        - "statsd"
+      port: 8125
+      checks:
+        - name: "Statsd health check"
+          udp: "localhost:8125"
+          interval: "10s"
+          timeout: "1s"
+              
+firewalld_allow_ports:
+  - { port: 25826/udp , zone: public , state: enabled }
+  - { port: 8083/tcp , zone: public , state: enabled }
+  - { port: 8086/tcp , zone: public , state: enabled }
+  - { port: 3001/tcp , zone: public , state: enabled }
+  - { port: 8125/udp , zone: public , state: enabled }

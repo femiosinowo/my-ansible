@@ -1,0 +1,7 @@
+---
+- hosts: metric_servers
+  roles:
+    - collectd
+    - influxdb
+    - grafana
+    - telegraf

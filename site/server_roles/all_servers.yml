@@ -10,6 +10,8 @@
     - consul
     - modules-extras
     - logstash
+    - grafana
+    - telegraf
 
 
     #- beats

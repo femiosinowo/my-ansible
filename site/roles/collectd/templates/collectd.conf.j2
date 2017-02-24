@@ -1,0 +1,6 @@
+{{ ansible_managed | comment }}
+
+{{ collectd_config | encode_apache(
+     convert_bools=true,
+     convert_nums=true,
+     quote_all_strings=true) }}

@@ -1,0 +1,9 @@
+---
+
+- name: Restart collectd service
+  service:
+    name: collectd
+    state: restarted
+  when: >
+    collectd_service_started is not defined or
+    not collectd_service_started.changed

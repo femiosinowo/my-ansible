@@ -3,7 +3,7 @@
   box: rhel.7.ansible
   ram: 512
   ip: 192.168.100.100
-- hostname: web1a
+- hostname: web1
   box: rhel.7.ansible
   ram: 1024
   ip: 192.168.100.101
@@ -59,3 +59,7 @@
   box: rhel.7.ansible
   ram: 1024
   ip: 192.168.100.122  
+- hostname: metric-server
+  box: rhel.7.ansible
+  ram: 1024
+  ip: 192.168.100.123

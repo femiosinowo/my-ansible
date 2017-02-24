@@ -1,0 +1,56 @@
+---
+
+- name: Ensure the system can use the HTTPS transport for APT.
+  become: true
+  become_user: "{{ influxdb_install_user }}"
+  stat:
+    path: /usr/lib/apt/methods/https
+  register: apt_https_transport
+  tags:
+    - influxdb
+    - packages
+
+- name: Install APT HTTPS transport.
+  become: true
+  become_user: "{{ influxdb_install_user }}"
+  apt:
+    name: "apt-transport-https"
+    state: present
+  when: not apt_https_transport.stat.exists
+  tags:
+    - influxdb
+    - packages
+
+- name: Download Influxdb apt key.
+  become: true
+  become_user: "{{ influxdb_install_user }}"
+  apt_key:
+    url: "https://repos.influxdata.com/influxdb.key"
+    state: present
+  tags:
+    - influxdb
+    - packages
+
+- name: Add Influxdb repository.
+  become: true
+  become_user: "{{ influxdb_install_user }}"
+  apt_repository:
+    repo: "deb https://repos.influxdata.com/{{ ansible_distribution|lower }} {{ ansible_distribution_release }} stable"
+    filename: "influxdb"
+    state: present
+  tags:
+    - influxdb
+    - packages
+
+- name: Install Influxdb.
+  become: true
+  become_user: "{{ influxdb_install_user }}"
+  apt:
+    name: influxdb
+    state: installed
+    update_cache: yes
+  notify:
+    - restart Influxdb
+  tags:
+    - influxdb
+    - packages

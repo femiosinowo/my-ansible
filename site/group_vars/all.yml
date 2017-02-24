@@ -53,6 +53,7 @@ consul_recursors:
 consul_group_name: sensu_servers
 consul_node_role: client
 
+influxdb_server: "influxdb.service.{{consul_datacenter}}.consul"
 
 sensu::server: "sensu.service.{{consul_datacenter}}.consul"
 rabbitmq::host: "rabbitmq.service.{{consul_datacenter}}.consul"
@@ -138,3 +139,113 @@ logstash_configs:
   - 01-agent-input.conf
   - 02-agent-output.conf
   - 03-agent-filter.conf
+  
+#metric
+
+
+
+telegraf_plugins:
+  - name: mem
+  - name: statsd
+  - name: nginx
+  - name: system
+  - name: cpu
+    options:
+      percpu: "true"
+      totalcpu: "true"
+      fielddrop:
+        - "time_*"
+  - name: disk
+    options:
+      mountpoints:
+        - "/"
+  - name: diskio
+    options:
+      skip_serial_number: "true"
+  - name: procstat
+    options:
+      exe: "influxd"
+      prefix: "influxdb"
+      
+      
+# Syslog plugin
+collectd_plugins_syslog_loglevel: info
+
+collectd_plugins_syslog:
+  - options:
+    - LoadPlugin: syslog
+  - sections:
+    - name: Plugin
+      param: syslog
+      content:
+        - options:
+          - LogLevel: "{{ collectd_plugins_syslog_loglevel }}"
+
+
+collectd_plugins_network:
+  - options:
+    - LoadPlugin: network
+  - sections:
+    - name: Plugin
+      param: network
+      content:
+        - options:
+          - Server: "{{ influxdb_server }}:25826"
+          
+#Server "192.168.0.42" "25827"
+# CPU plugin
+collectd_plugins_cpu:
+  - options:
+    - LoadPlugin: cpu
+
+#DISK
+collectd_plugins_disk:
+  - options:
+    - LoadPlugin: disk
+  - sections:
+    - name: Plugin
+      param: disk
+      content:
+        - options:
+          - Disk: "sda"
+          - Disk: "/^hd/"
+          - IgnoreSelected: "false"
+    
+# Interface plugin
+collectd_plugins_interface:
+  - options:
+    - LoadPlugin: interface
+
+ 
+# Load plugin
+collectd_plugins_load:
+  - options:
+    - LoadPlugin: load
+
+# df plugin
+collectd_plugins_df:
+  - options:
+    - LoadPlugin: df
+
+collectd_plugins_fhcount:
+  - options:
+    - LoadPlugin: fhcount
+    
+# Memory plugin
+collectd_plugins_memory:
+  - options:
+    - LoadPlugin: memory
+
+
+# Plugins definitions
+collectd_plugins_default: "{{
+  collectd_plugins_syslog +
+  collectd_plugins_cpu +
+  collectd_plugins_interface +
+  collectd_plugins_load +
+  collectd_plugins_memory + 
+  collectd_plugins_network + 
+  collectd_plugins_disk +
+  collectd_plugins_df + 
+  collectd_plugins_fhcount
+}}"

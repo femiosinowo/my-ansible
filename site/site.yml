@@ -10,4 +10,4 @@
 - include: server_roles/jenkins_servers.yml
 - include: server_roles/great_server.yml
 - include: server_roles/ha_servers.yml
-#- include: server_roles/db_servers.yml
+- include: server_roles/metric_servers.yml

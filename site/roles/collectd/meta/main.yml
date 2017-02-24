@@ -1,0 +1,15 @@
+---
+
+galaxy_info:
+  author: Jiri Tyr
+  description: Role which installs CollectD.
+  license: MIT
+  min_ansible_version: 2.1
+  platforms:
+    - name: EL
+      versions:
+        - all
+  categories:
+    - monitoring
+dependencies:
+  - config_encoder_filters

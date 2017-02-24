@@ -1,0 +1,330 @@
+### Welcome to the InfluxDB configuration file.
+
+# Once every 24 hours InfluxDB will report usage data to usage.influxdata.com
+# The data includes a random ID, os, arch, version, the number of series and other
+# usage data. No data from user databases is ever transmitted.
+# Change this option to true to disable reporting.
+reporting-disabled = {{ influxdb_reporting_disabled|default(false)|bool|lower }}
+
+# we'll try to get the hostname automatically, but if it the os returns something
+# that isn't resolvable by other servers in the cluster, use this option to
+# manually set the hostname
+# hostname = "localhost"
+{% if influxdb_hostname|default(false) %}
+hostname = "{{ influxdb_hostname }}"
+{% endif %}
+
+###
+### [meta]
+###
+### Controls the parameters for the Raft consensus group that stores metadata
+### about the InfluxDB cluster.
+###
+
+[meta]
+  # Where the metadata/raft database is stored
+  dir = "{{ influxdb_meta_dir }}"
+
+  retention-autocreate = {{ influxdb_meta_retention_autocreate|default(true)|bool|lower }}
+
+  # If log messages are printed for the meta service
+  logging-enabled = {{ influxdb_meta_logging_enabled|default(true)|bool|lower }}
+  pprof-enabled = {{ influxdb_meta_pprof_enabled|default(false)|bool|lower }}
+
+  # The default duration for leases.
+  lease-duration = "{{ influxdb_meta_lease_duration }}"
+
+###
+### [data]
+###
+### Controls where the actual shard data for InfluxDB lives and how it is
+### flushed from the WAL. "dir" may need to be changed to a suitable place
+### for your system, but the WAL settings are an advanced configuration. The
+### defaults should work for most systems.
+###
+
+[data]
+  # Controls if this node holds time series data shards in the cluster
+  enabled = {{ influxdb_data_enabled|default(true)|bool|lower }}
+
+  dir = "{{ influxdb_data_dir }}"
+
+  # These are the WAL settings for the storage engine >= 0.9.3
+  wal-dir = "{{ influxdb_data_wal_dir }}"
+  wal-logging-enabled = {{ influxdb_data_wal_logging_enabled|default(true)|bool|lower }}
+
+  # Trace logging provides more verbose output around the tsm engine. Turning
+  # this on can provide more useful output for debugging tsm engine issues.
+  trace-logging-enabled = {{ influxdb_data_trace_logging_enabled|default(false)|bool|lower }}
+
+  # Whether queries should be logged before execution. Very useful for troubleshooting, but will
+  # log any sensitive data contained within a query.
+  query-log-enabled = {{ influxdb_data_query_log_enabled|default(false)|bool|lower }}
+
+  # Settings for the TSM engine
+
+  # CacheMaxMemorySize is the maximum size a shard's cache can
+  # reach before it starts rejecting writes.
+  # cache-max-memory-size = 524288000
+{% if influxdb_data_cache_max_memory_size|default(false) %}
+  cache-max-memory-size = {{ influxdb_data_cache_max_memory_size }}
+{% endif %}
+
+  # CacheSnapshotMemorySize is the size at which the engine will
+  # snapshot the cache and write it to a TSM file, freeing up memory
+  # cache-snapshot-memory-size = 26214400
+{% if influxdb_data_cache_snapshot_memory_size|default(false) %}
+  cache-snapshot-memory-size = {{ influxdb_data_cache_snapshot_memory_size }}
+{% endif %}
+
+  # CacheSnapshotWriteColdDuration is the length of time at
+  # which the engine will snapshot the cache and write it to
+  # a new TSM file if the shard hasn't received writes or deletes
+  # cache-snapshot-write-cold-duration = "1h"
+{% if influxdb_data_cache_snapshot_write_cold_duration|default(false) %}
+  cache-snapshot-write-cold-duration = {{ influxdb_data_cache_snapshot_write_cold_duration }}
+{% endif %}
+
+  # MinCompactionFileCount is the minimum number of TSM files
+  # that need to exist before a compaction cycle will run
+  # compact-min-file-count = 3
+{% if influxdb_data_compact_min_file_count|default(false) %}
+  compact-min-file-count = {{ influxdb_data_compact_min_file_count }}
+{% endif %}
+
+  # CompactFullWriteColdDuration is the duration at which the engine
+  # will compact all TSM files in a shard if it hasn't received a
+  # write or delete
+  # compact-full-write-cold-duration = "24h"
+{% if influxdb_data_compact_full_write_cold_duration|default(false) %}
+  compact-full-write-cold-duration = {{ influxdb_data_compact_full_write_cold_duration }}
+{% endif %}
+
+  # MaxPointsPerBlock is the maximum number of points in an encoded
+  # block in a TSM file. Larger numbers may yield better compression
+  # but could incur a performance penalty when querying
+  # max-points-per-block = 1000
+{% if influxdb_data_max_points_per_block|default(false) %}
+  max-points-per-block = {{ influxdb_data_max_points_per_block }}
+{% endif %}
+
+###
+### [coordinator]
+###
+### Controls the clustering service configuration.
+###
+
+[coordinator]
+  write-timeout = "{{ influxdb_coordinator_write_timeout }}"
+  max-concurrent-queries = {{ influxdb_coordinator_max_concurrent_queries }}
+  query-timeout = "{{ influxdb_coordinator_query_timeout }}"
+  log-queries-after = "{{ influxdb_coordinator_log_queries_after }}"
+  max-select-point = {{ influxdb_coordinator_max_select_point }}
+  max-select-series = {{ influxdb_coordinator_max_select_series }}
+  max-select-buckets = {{ influxdb_coordinator_max_select_buckets }}
+
+###
+### [retention]
+###
+### Controls the enforcement of retention policies for evicting old data.
+###
+
+[retention]
+  enabled = {{ influxdb_retention_enabled|default(true)|bool|lower }}
+  check-interval = "{{ influxdb_retention_check_interval }}"
+
+###
+### [shard-precreation]
+###
+### Controls the precreation of shards, so they are available before data arrives.
+### Only shards that, after creation, will have both a start- and end-time in the
+### future, will ever be created. Shards are never precreated that would be wholly
+### or partially in the past.
+
+[shard-precreation]
+  enabled = {{ influxdb_shard_precreation_enabled|default(true)|bool|lower }}
+  check-interval = "{{ influxdb_shard_precreation_check_interval }}"
+  advance-period = "{{ influxdb_shard_precreation_advance_period }}"
+
+###
+### Controls the system self-monitoring, statistics and diagnostics.
+###
+### The internal database for monitoring data is created automatically if
+### if it does not already exist. The target retention within this database
+### is called 'monitor' and is also created with a retention period of 7 days
+### and a replication factor of 1, if it does not exist. In all cases the
+### this retention policy is configured as the default for the database.
+
+[monitor]
+  store-enabled = {{ influxdb_monitor_store_enabled|default(true)|bool|lower }} # Whether to record statistics internally.
+  store-database = "{{ influxdb_monitor_store_database }}" # The destination database for recorded statistics
+  store-interval = "{{ influxdb_monitor_store_interval }}" # The interval at which to record statistics
+
+###
+### [admin]
+###
+### Controls the availability of the built-in, web-based admin interface. If HTTPS is
+### enabled for the admin interface, HTTPS must also be enabled on the [http] service.
+###
+
+[admin]
+  enabled = {{ influxdb_admin_enabled|default(true)|bool|lower }}
+  bind-address = "{{ influxdb_admin_bind_address|default(':8083') }}"
+  https-enabled = {{ influxdb_admin_https_enabled|default(false)|bool|lower }}
+  https-certificate = "{{ influxdb_admin_https_certificate }}"
+
+###
+### [http]
+###
+### Controls how the HTTP endpoints are configured. These are the primary
+### mechanism for getting data into and out of InfluxDB.
+###
+
+[http]
+  enabled = {{ influxdb_http_enabled|default(true)|bool|lower }}
+  bind-address = "{{ influxdb_http_bind_address|default(':8086') }}"
+  auth-enabled = {{ influxdb_http_auth_enabled|default(false)|bool|lower }}
+  log-enabled = {{ influxdb_http_log_enabled|default(true)|bool|lower }}
+  write-tracing = {{ influxdb_http_write_tracing|default(false)|bool|lower }}
+  pprof-enabled = {{ influxdb_http_pprof_enabled|default(false)|bool|lower }}
+  https-enabled = {{ influxdb_http_https_enabled|default(false)|bool|lower }}
+  https-certificate = "{{ influxdb_http_https_certificate }}"
+  ### Use a separate private key location.
+  # https-private-key = ""
+{% if influxdb_http_https_private_key|default(false) != '' %}
+  https-private-key = "{{ influxdb_http_https_private_key }}"
+{% endif %}
+  max-row-limit = 10000
+  realm = "{{ influxdb_http_realm|default('InfluxDB') }}"
+
+###
+### [subsciber]
+###
+### Controls the subscriptions, which can be used to fork a copy of all data
+### received by the InfluxDB host.
+###
+
+[subsciber]
+  enabled = {{ influxdb_subscriber_enabled|default(true)|bool|lower }}
+  http-timeout = "{{ influxdb_subscriber_http_timeout|default('30s') }}"
+
+###
+### [[graphite]]
+###
+### Controls one or many listeners for Graphite data.
+###
+
+{% for listener in influxdb_graphite %}
+[[graphite]]
+  enabled = {{ listener.enabled|default(false)|bool|lower }}
+{% for key,value in listener|dictsort %}
+{% if key == 'enabled' %}
+{# 'enabled' already set above #}
+{# BOOLEAN #}
+{% elif value|string == 'True' or value|string == 'False' %}
+  {{ key }} = {{ value|bool|lower }}
+{% elif value is number %}
+  {{ key }} = {{ value }}
+{% elif value is string %}
+  {{ key }} = "{{ value }}"
+{# LIST #}
+{% elif value is iterable and value is not mapping %}
+  {{ key }} = [ "{{ value|join('", "') }}" ]
+{% endif %}
+{% endfor %}
+
+{% endfor %}
+
+###
+### [collectd]
+###
+### Controls one or many listeners for collectd data.
+###
+
+{% for listener in influxdb_collectd %}
+[[collectd]]
+  enabled = {{ listener.enabled|default(false)|bool|lower }}
+{% for key,value in listener|dictsort %}
+{% if key == 'enabled' %}
+{# 'enabled' already set above #}
+{# BOOLEAN #}
+{% elif value|string == 'True' or value|string == 'False' %}
+  {{ key }} = {{ value|bool|lower }}
+{% elif value is number %}
+  {{ key }} = {{ value }}
+{% elif value is string %}
+  {{ key }} = "{{ value }}"
+{# LIST #}
+{% elif value is iterable and value is not mapping %}
+  {{ key }} = [ "{{ value|join('", "') }}" ]
+{% endif %}
+{% endfor %}
+
+{% endfor %}
+
+###
+### [opentsdb]
+###
+### Controls one or many listeners for OpenTSDB data.
+###
+
+{% for listener in influxdb_opentsdb %}
+[[opentsdb]]
+  enabled = {{ listener.enabled|default(false)|bool|lower }}
+{% for key,value in listener|dictsort %}
+{% if key == 'enabled' %}
+{# 'enabled' already set above #}
+{# BOOLEAN #}
+{% elif value|string == 'True' or value|string == 'False' %}
+  {{ key }} = {{ value|bool|lower }}
+{% elif value is number %}
+  {{ key }} = {{ value }}
+{% elif value is string %}
+  {{ key }} = "{{ value }}"
+{# LIST #}
+{% elif value is iterable and value is not mapping %}
+  {{ key }} = [ "{{ value|join('", "') }}" ]
+{% endif %}
+{% endfor %}
+
+{% endfor %}
+
+###
+### [[udp]]
+###
+### Controls the listeners for InfluxDB line protocol data via UDP.
+###
+
+{% for listener in influxdb_udp %}
+[[udp]]
+  enabled = {{ listener.enabled|default(false)|bool|lower }}
+{% for key,value in listener|dictsort %}
+{% if key == 'enabled' %}
+{# 'enabled' already set above #}
+{# BOOLEAN #}
+{% elif value|string == 'True' or value|string == 'False' %}
+  {{ key }} = {{ value|bool|lower }}
+{% elif value is number %}
+  {{ key }} = {{ value }}
+{% elif value is string %}
+  {{ key }} = "{{ value }}"
+{# LIST #}
+{% elif value is iterable and value is not mapping %}
+  {{ key }} = [ "{{ value|join('", "') }}" ]
+{% endif %}
+{% endfor %}
+
+{% endfor %}
+
+###
+### [continuous_queries]
+###
+### Controls how continuous queries are run within InfluxDB.
+###
+
+[continuous_queries]
+  log-enabled = {{ influxdb_continuous_queries_log_enabled|default(true)|bool|lower }}
+  enabled = {{ influxdb_continuous_queries_enabled|default(true)|bool|lower }}
+{% if influxdb_continuous_queries_run_interval|default(false) %}
+  run-interval = "{{ influxdb_continuous_queries_run_interval }}" # interval for how often continuous queries will be checked if they need to run
+{% endif %}

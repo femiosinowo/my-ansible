@@ -70,5 +70,6 @@ jenkins2_suggested_plugins:
   - ws-cleanup
   - xvfb
   - test-results-analyzer
+  - ansible
 
 jenkins2_plugins: []

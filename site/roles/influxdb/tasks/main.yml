@@ -1,0 +1,43 @@
+---
+
+- name: Setup
+  include: setup.yml
+
+- name: Write config
+  become: true
+  become_user: "{{ influxdb_install_user }}"
+  template:
+    src: influxdb.conf.j2
+    dest: "{{ influxdb_config_dir }}/{{ influxdb_config_file }}"
+    group: "{{ influxdb_group }}"
+    owner: "{{ influxdb_user }}"
+    backup: yes
+  notify:
+    - restart Influxdb
+  tags:
+    - influxdb
+
+- name: start Influxdb service
+  become: true
+  become_user: "{{ influxdb_install_user }}"
+  service:
+    enabled: yes
+    name: influxdb
+    state: started
+  tags:
+    - influxdb
+
+- name: Wait for influx to be reachable
+  wait_for:
+    connect_timeout: 2
+    delay: 0
+    host: 127.0.0.1
+    port: 8086
+    state: started
+    timeout: 20
+
+- name: Manage databases and users
+  include: administration.yml
+  tags:
+    - influxdb
+    - administration

@@ -1,0 +1,20 @@
+---
+
+- name: Manage databases
+  become: true
+  become_user: "{{ influxdb_install_user }}"
+  script: "manage_influx_database.sh {{ item }}"
+  register: manage_influx_database_result
+  changed_when: "manage_influx_database_result.rc == 10"
+  failed_when: "manage_influx_database_result.rc != 0 and manage_influx_database_result.rc != 10"
+  with_items: "{{ influxdb_databases }}"
+
+- name: manage users
+  influxdb_user:
+    name: "{{ item.name }}"
+    password: "{{ item.password|default(None) }}"
+    state: "{{ item.state|default('present') }}"
+    admin: "{{ item.admin|default(False) }}"
+    grants: "{{ item.grants|default(None) }}"
+    append_grants: "{{ item.append_grants|default(False) }}"
+  with_items: "{{ influxdb_users }}"

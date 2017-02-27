@@ -11,3 +11,4 @@
 - include: server_roles/great_server.yml
 - include: server_roles/ha_servers.yml
 - include: server_roles/metric_servers.yml
+- include: server_roles/hadoop_server.yml

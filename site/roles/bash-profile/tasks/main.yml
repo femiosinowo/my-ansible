@@ -1,0 +1,30 @@
+---
+- name: resolve platform specific vars
+  include_vars: "{{item}}"
+  with_first_found:
+    - files:
+      - "{{ansible_distribution}}-{{ansible_distribution_release}}.yml"
+      - "{{ansible_distribution}}.yml"
+      - "{{ansible_os_family}}.yml"
+      skip: true
+
+- name: create profile.d directory...
+  become: '{{bash_profile_privilege_escalation}}'
+  become_user: root
+  file:
+    path: '{{bash_profile_setup_dir}}'
+    state: directory
+    mode: 0755
+
+- name: Setup bash_profile to read profile.d directory
+  when: not bash_profile_privilege_escalation
+  blockinfile:
+    dest: ~/.bash_profile
+    marker: "# {mark} ANSIBLE MANAGED BLOCK bash_profile "
+    block: |
+      # include every .sh file in your {{bash_profile_setup_dir}} in sort order
+      for i in $(ls {{bash_profile_setup_dir}}/*.sh | sort) ; do
+          if [ -r "$i" ]; then
+            . $i
+          fi
+      done

@@ -1,0 +1,18 @@
+- file:
+    path: /etc/rc.d/rc.local
+    owner: root
+    group: root
+    mode: "o+x,o+r"
+    
+- lineinfile:
+    dest: "/etc/rc.local"
+    regexp: "{{ hadoop_home }}/sbin/start-dfs.sh"
+    line: "{{ hadoop_home }}/sbin/start-dfs.sh"
+    
+- lineinfile:
+    dest: "/etc/rc.local"
+    regexp: "{{ hadoop_home }}/sbin/start-yarn.sh"  
+    line: "{{ hadoop_home }}/sbin/start-yarn.sh"   
+        
+- name: start rc-local
+  service: name=rc-local  state=started   enabled=yes

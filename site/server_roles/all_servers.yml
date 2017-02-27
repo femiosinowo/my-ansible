@@ -1,17 +1,16 @@
 ---
 - hosts: all
   roles:
-    - epel
-    - firewalld
-    - ruby
-    - resolv_conf
+    #- epel
+    #- firewalld
+    #- ruby
+    #- resolv_conf
     - common
     - java
-    - consul
-    - modules-extras
-    - logstash
-    - grafana
-    - telegraf
+    #- consul
+    #- modules-extras
+    #- logstash
+    #- telegraf
 
 
     #- beats

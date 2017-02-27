@@ -1,0 +1,3 @@
+hadoop_type_of_node: master
+hadoop_master: 192.168.100.124
+consul_services: []

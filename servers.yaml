@@ -63,3 +63,7 @@
   box: rhel.7.ansible
   ram: 1024
   ip: 192.168.100.123
+- hostname: hadoop-server
+  box: rhel.7.ansible
+  ram: 2048
+  ip: 192.168.100.124

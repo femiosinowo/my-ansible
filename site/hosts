@@ -23,6 +23,15 @@
 [metric_servers]
 192.168.100.123
 
+[hadoop_server]
+192.168.100.124
+
+[hadoop_master]
+192.168.100.124
+
+[hadoop_slaves]
+192.168.100.124
+
 
 [messaging_servers]
 192.168.100.107
